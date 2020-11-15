@@ -191,4 +191,4 @@ def update_graph(country_code, strictness):
     return fig, dcc.Markdown(text.format(country, strictness_level))
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=7777)
+    app.run_server()

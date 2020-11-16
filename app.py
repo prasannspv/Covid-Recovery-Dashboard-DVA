@@ -3,23 +3,45 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.express as px
-from pycountry_convert import country_alpha2_to_country_name, country_name_to_country_alpha2, country_name_to_country_alpha3
+from pycountry_convert import country_alpha2_to_country_name, country_name_to_country_alpha2, \
+    country_name_to_country_alpha3
 from pycountry_convert.convert_country_alpha2_to_continent_code import COUNTRY_ALPHA2_TO_CONTINENT_CODE
 from dash.dependencies import Output, Input
 from pycountry_convert.country_wikipedia import WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+
+tabs_styles = {
+    'height': '20px'
+}
+tab_style = {
+    'borderBottom': '1px solid #d6d6d6',
+    'padding': '6px',
+    'fontWeight': 'bold'
+}
+
+tab_selected_style = {
+    'borderTop': '1px solid #d6d6d6',
+    'borderBottom': '1px solid #d6d6d6',
+    'backgroundColor': '#119DFF',
+    'color': 'white',
+    'padding': '6px'
+}
+
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app.config['suppress_callback_exceptions'] = True
 server = app.server
 text = "For **{0}**, map shows the countries with which it should open its " \
        "air corridor basis the **{1}** Strictness Level of Policy. The map also shows the COVID Infection Rate for the countries from which the " \
        "flights will operate."
+
 
 def try_convert(country_name):
     try:
         return country_name_to_country_alpha3(country_name)
     except:
         return None
+
 
 flights_data = pd.read_csv("dataset/merged-airlines.csv")
 flights_data['CC'] = flights_data['source_airport_country'].apply(lambda x: try_convert(x))
@@ -38,64 +60,100 @@ country_options = []
 for country, country_code in WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2.items():
     country_options.append({'label': country, 'value': country_code})
 
+
+def get_filtered_map():
+    return html.Div([
+        html.Div([
+            html.Div([
+                html.H2('COVID Recovery Dashboard'),
+                html.H5('Team 162 - DVA Nightwalkers')
+            ], className='columns', style={'textAlign': 'center'})
+        ]),
+        html.Div([
+            html.Div([
+                html.H6("Select Country and Policy", className="control_label"),
+                html.P("Filter by Continent", className="control_label"),
+                get_filter_by_continent(),
+                html.P("Select the Country", className="control_label"),
+                get_filter_by_country(),
+                html.P("Select Strictness Level of Policy", className="control_label"),
+                dcc.RadioItems(
+                    id='strictness',
+                    options=[
+                        {'label': 'Lowest Level of Strictness', 'value': 'low'},
+                        {'label': 'Moderate Level of Strictness', 'value': 'med'},
+                        {'label': 'Highest Level of Strictness', 'value': 'high'}
+                    ],
+                    value='low',
+                    className="dcc_control"
+                ),
+                html.Span("Policy Selected:", className="control_label"),
+                html.Span("Moderate", id="policy_selected", className="control_label"),
+                html.P(),
+                html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'})
+            ], className="pretty_container four columns"),
+            html.Div([
+                html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
+                html.P(),
+                dcc.Graph(
+                    id='world_map'
+                )
+            ], className="pretty_container eight columns", id='rightCol')
+        ], className="row", ),
+    ], id="mainContainer"
+    )
+
+
+def get_filter_by_country():
+    return dcc.Dropdown(
+        id="country-selector",
+        options=country_options,
+        value="US",
+        className="dcc_control"
+    )
+
+
+def get_filter_by_continent():
+    return dcc.RadioItems(
+        id='continent-selector',
+        options=[
+            {'label': 'All', 'value': 'all'},
+            {'label': 'Africa', 'value': 'AF'},
+            {'label': 'Asia', 'value': 'AS'},
+            {'label': 'Europe', 'value': 'EU'},
+            {'label': 'Oceania', 'value': 'OC'},
+            {'label': 'North America', 'value': 'NA'},
+            {'label': 'South America', 'value': 'SA'}
+        ],
+        value='all',
+        className="dcc_control"
+    )
+
+
+# app.layout = get_filtered_map()
 app.layout = html.Div([
-    html.Div([
-        html.Div([
-            html.H2('COVID Recovery Dashboard'),
-            html.H5('Team 162 - DVA Nightwalkers')
-        ], className = 'columns', style = {'textAlign': 'center'})
-    ]),
-    html.Div([
-        html.Div([
-            html.H6("Select Country and Policy", className = "control_label"),
-            html.P("Filter by Continent", className = "control_label"),
-            dcc.RadioItems(
-                id='continent-selector',
-                options = [
-                    {'label': 'All', 'value': 'all'},
-                    {'label': 'Africa', 'value': 'AF'},
-                    {'label': 'Asia', 'value': 'AS'},
-                    {'label': 'Europe', 'value': 'EU'},
-                    {'label': 'Oceania', 'value': 'OC'},
-                    {'label': 'North America', 'value': 'NA'},
-                    {'label': 'South America', 'value': 'SA'}
-                ],
-                value = 'all',
-                className = "dcc_control"
-            ),
-            html.P("Select the Country", className = "control_label"),
-            dcc.Dropdown(
-                id = "country-selector",
-                options = country_options,
-                value = "US",
-                className = "dcc_control"
-            ),
-            html.P("Select Strictness Level of Policy", className = "control_label"),
-            dcc.RadioItems(
-                id = 'strictness',
-                options = [
-                    {'label': 'Lowest Level of Strictness', 'value': 'low'},
-                    {'label': 'Moderate Level of Strictness', 'value': 'med'},
-                    {'label': 'Highest Level of Strictness', 'value': 'high'}
-                ],
-                value = 'low',
-                className = "dcc_control"
-            ),
-            html.Span("Policy Selected:", className = "control_label"),
-            html.Span("Moderate", id="policy_selected", className = "control_label"),
-            html.P(),
-            html.Div(id="policy-indicator", style = {'padding': '0px 10px 10px 10px'})
-        ], className = "pretty_container four columns"),
-        html.Div([
-            html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
-            html.P(),
-            dcc.Graph(
-                id = 'world_map'
-            )
-        ], className = "pretty_container eight columns", id='rightCol')
-    ], className = "row",),
-], id="mainContainer"
-)
+    dcc.Tabs(id="tabs-styled-with-props", value='tab-1', children=[
+        dcc.Tab(label='1', value='tab-1', style=tab_style, selected_style=tab_selected_style),
+        dcc.Tab(label='2', value='tab-2', style=tab_style, selected_style=tab_selected_style),
+    ], colors={
+        "border": "white",
+        "primary": "gold",
+        "background": "cornsilk"
+    }),
+    html.Div(id='tabs-content-props')
+])
+
+
+@app.callback(Output('tabs-content-props', 'children'),
+              [Input('tabs-styled-with-props', 'value')])
+def render_content(tab):
+    if tab == 'tab-1':
+        return html.Div([
+            html.H3('Tab content 1')
+        ])
+    elif tab == 'tab-2':
+        return get_filtered_map()
+
 
 @app.callback(Output('country-selector', 'options'),
               [Input('continent-selector', 'value')])
@@ -113,8 +171,9 @@ def continent_filer_options(continent):
         return options
 
 
-@app.callback([Output('policy-indicator', 'children'), Output('policy_selected', 'children'), Output('policy_selected', 'style')],
-              [Input('strictness', 'value')])
+@app.callback(
+    [Output('policy-indicator', 'children'), Output('policy_selected', 'children'), Output('policy_selected', 'style')],
+    [Input('strictness', 'value')])
 def policy_indicator(strictness):
     policy = {
         "low": [
@@ -149,7 +208,7 @@ def policy_indicator(strictness):
         value = restriction['value']
         label = restriction['label']
         resp = "✔️" if value == "yes" else "❌"
-        elements.append(html.Span(resp, className = f"{value}"))
+        elements.append(html.Span(resp, className=f"{value}"))
         elements.append(html.Span(f" {label}"))
 
     strictness_lbl = {
@@ -165,6 +224,7 @@ def policy_indicator(strictness):
 
     return elements, strictness_lbl[strictness], {'color': color[strictness]}
 
+
 @app.callback(
     [Output('world_map', 'figure'), Output('text', 'children')],
     [Input('country-selector', 'value'), Input('strictness', 'value')])
@@ -173,23 +233,25 @@ def update_graph(country_code, strictness):
     dest_lat = latlon.loc[latlon['name'] == country]['latitude'].iloc[0]
     dest_lon = latlon.loc[latlon['name'] == country]['longitude'].iloc[0]
     dest_flights = flights_data[flights_data['dest_airport_country'] == country]
-    fig = px.choropleth(dest_flights, locationmode = "ISO-3", locations = 'CC', color = 'flight_capacity', color_continuous_scale="blues", template = 'seaborn')
+    fig = px.choropleth(dest_flights, locationmode="ISO-3", locations='CC', color='flight_capacity',
+                        color_continuous_scale="blues", template='seaborn')
 
     for val in dest_flights.itertuples():
         source = val[1]
         try:
             lat = latlon.loc[latlon['name'] == source]['latitude'].iloc[0]
             lon = latlon.loc[latlon['name'] == source]['longitude'].iloc[0]
-            fig = fig.add_scattergeo(lat = [lat, dest_lat], lon = [lon, dest_lon], line = dict(width = 1, color = '#1F1F1F'),
-                                     mode = 'lines', showlegend = False)
+            fig = fig.add_scattergeo(lat=[lat, dest_lat], lon=[lon, dest_lon], line=dict(width=1, color='#1F1F1F'),
+                                     mode='lines', showlegend=False)
         except:
             continue
-    strictness_level  = {
+    strictness_level = {
         'low': "Lowest",
         'med': "Moderate",
         'high': "Highest"
     }[strictness]
     return fig, dcc.Markdown(text.format(country, strictness_level))
+
 
 if __name__ == '__main__':
     app.run_server()

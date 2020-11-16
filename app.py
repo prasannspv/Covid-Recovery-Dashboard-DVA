@@ -319,4 +319,4 @@ def update_graph(country_code, strictness):
 
 
 if __name__ == '__main__':
-    app.run_server(port = 7777, debug = True)
+    app.run_server()

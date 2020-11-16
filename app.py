@@ -2,9 +2,12 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
+import numpy as np
+from plotly.graph_objects import layout
+import json
 import plotly.express as px
 from pycountry_convert import country_alpha2_to_country_name, country_name_to_country_alpha2, \
-    country_name_to_country_alpha3
+    country_name_to_country_alpha3, map_country_alpha2_to_country_alpha3
 from pycountry_convert.convert_country_alpha2_to_continent_code import COUNTRY_ALPHA2_TO_CONTINENT_CODE
 from dash.dependencies import Output, Input
 from pycountry_convert.country_wikipedia import WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2
@@ -46,6 +49,9 @@ def try_convert(country_name):
 flights_data = pd.read_csv("dataset/merged-airlines.csv")
 flights_data['CC'] = flights_data['source_airport_country'].apply(lambda x: try_convert(x))
 latlon = pd.read_csv("dataset/latlon.csv", encoding='latin-1')
+inf_policy = pd.read_csv("dataset/infection_policy.csv")
+inf_choropleth_recent_data = inf_policy[inf_policy.date == '2020-10-06']
+a2toa3 = map_country_alpha2_to_country_alpha3()
 
 continent_filter = {}
 for country_code, continent in COUNTRY_ALPHA2_TO_CONTINENT_CODE.items():
@@ -63,12 +69,6 @@ for country, country_code in WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2.items():
 
 def get_filtered_map():
     return html.Div([
-        html.Div([
-            html.Div([
-                html.H2('COVID Recovery Dashboard'),
-                html.H5('Team 162 - DVA Nightwalkers')
-            ], className='columns', style={'textAlign': 'center'})
-        ]),
         html.Div([
             html.Div([
                 html.H6("Select Country and Policy", className="control_label"),
@@ -104,18 +104,42 @@ def get_filtered_map():
     )
 
 
-def get_filter_by_country():
+def get_kpi_plots():
+    return html.Div([
+        html.Div([
+            html.Div([
+                html.P("Select the Continent", className="control_label"),
+                get_filter_by_continent(id="kpi-continent"),
+                html.P("Select the Country", className="control_label"),
+                get_filter_by_country(id="kpi-country"),
+                html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'})
+            ], className="pretty_container four columns"),
+            html.Div([
+                html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
+                html.P(),
+                dcc.Graph(
+                    id='new_cases'
+                )
+            ], className="pretty_container eight columns", id='rightCol')
+        ], className="row", ),
+    ], id="mainContainer"
+    )
+
+
+def get_filter_by_country(id=None):
+    id = "country-selector" if id is None else id
     return dcc.Dropdown(
-        id="country-selector",
+        id=id,
         options=country_options,
         value="US",
         className="dcc_control"
     )
 
 
-def get_filter_by_continent():
+def get_filter_by_continent(id=None):
+    id = "continent-selector" if id is None else id
     return dcc.RadioItems(
-        id='continent-selector',
+        id=id,
         options=[
             {'label': 'All', 'value': 'all'},
             {'label': 'Africa', 'value': 'AF'},
@@ -132,9 +156,13 @@ def get_filter_by_continent():
 
 # app.layout = get_filtered_map()
 app.layout = html.Div([
+    html.Div([
+        html.H2('COVID Recovery Dashboard'),
+        html.H5('Team 162 - DVA Nightwalkers')
+    ], style = {'textAlign': 'center'}),
     dcc.Tabs(id="tabs-styled-with-props", value='tab-1', children=[
-        dcc.Tab(label='1', value='tab-1', style=tab_style, selected_style=tab_selected_style),
-        dcc.Tab(label='2', value='tab-2', style=tab_style, selected_style=tab_selected_style),
+        dcc.Tab(label='Key Performance Indicators', value='tab-1', style=tab_style, selected_style=tab_selected_style),
+        dcc.Tab(label='Prediction Engine', value='tab-2', style=tab_style, selected_style=tab_selected_style),
     ], colors={
         "border": "white",
         "primary": "gold",
@@ -148,9 +176,7 @@ app.layout = html.Div([
               [Input('tabs-styled-with-props', 'value')])
 def render_content(tab):
     if tab == 'tab-1':
-        return html.Div([
-            html.H3('Tab content 1')
-        ])
+        return get_kpi_plots()
     elif tab == 'tab-2':
         return get_filtered_map()
 
@@ -170,6 +196,44 @@ def continent_filer_options(continent):
             })
         return options
 
+@app.callback(Output('kpi-country', 'options'),
+              [Input('kpi-continent', 'value')])
+def kpi_continent_filer_options(continent):
+    if continent == 'all':
+        return country_options
+    else:
+        options = []
+        countries = continent_filter[continent]
+        for country in countries:
+            options.append({
+                'label': country,
+                'value': country_name_to_country_alpha2(country)
+            })
+        return options
+
+
+@app.callback(
+    Output('new_cases', 'figure'),
+    [Input('kpi-continent', 'value'), Input('kpi-country', 'value')]
+)
+def kpi_plots(continent_code, country_code):
+    continent = {
+        "AF": "africa",
+        "AS": "asia",
+        "NA": "north america",
+        "SA": "south america",
+        "EU": "europe",
+        "AU": "australia",
+        "OC": None,
+        "all": None
+    }[continent_code]
+    fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code', color='positive_rate', color_continuous_scale="reds", template='seaborn', range_color = [0, 0.25], scope = continent)
+    if continent_code == "OC":
+        fig.update_geos(
+            lataxis_range = [-50, 0], lonaxis_range = [50, 250]
+        )
+
+    return fig
 
 @app.callback(
     [Output('policy-indicator', 'children'), Output('policy_selected', 'children'), Output('policy_selected', 'style')],
@@ -254,4 +318,4 @@ def update_graph(country_code, strictness):
 
 
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(port = 7777, debug = True)

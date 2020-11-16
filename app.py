@@ -19,16 +19,17 @@ tabs_styles = {
 }
 tab_style = {
     'borderBottom': '1px solid #d6d6d6',
-    'padding': '6px',
-    'fontWeight': 'bold'
+    # 'padding': '6px',
+    # 'fontWeight': 'bold'
 }
 
 tab_selected_style = {
-    'borderTop': '1px solid #d6d6d6',
-    'borderBottom': '1px solid #d6d6d6',
-    'backgroundColor': '#119DFF',
-    'color': 'white',
-    'padding': '6px'
+    # 'borderTop': '1px solid #d6d6d6',
+    # 'borderBottom': '1px solid #d6d6d6',
+    'backgroundColor': '#F2F2F2',
+    'color': 'black',
+    'fontWeight': 'bold'
+    # 'padding': '6px'
 }
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)

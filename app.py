@@ -3,11 +3,11 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import numpy as np
-from plotly.graph_objects import layout
+import plotly.graph_objects as go
 import json
 import plotly.express as px
 from pycountry_convert import country_alpha2_to_country_name, country_name_to_country_alpha2, \
-    country_name_to_country_alpha3, map_country_alpha2_to_country_alpha3
+    country_name_to_country_alpha3, map_country_alpha2_to_country_alpha3, map_country_alpha3_to_country_alpha2
 from pycountry_convert.convert_country_alpha2_to_continent_code import COUNTRY_ALPHA2_TO_CONTINENT_CODE
 from dash.dependencies import Output, Input
 from pycountry_convert.country_wikipedia import WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2
@@ -53,6 +53,8 @@ latlon = pd.read_csv("dataset/latlon.csv", encoding='latin-1')
 inf_policy = pd.read_csv("dataset/infection_policy.csv")
 inf_choropleth_recent_data = inf_policy[inf_policy.date == '2020-10-06']
 a2toa3 = map_country_alpha2_to_country_alpha3()
+a3toa2 = map_country_alpha3_to_country_alpha2()
+arima = pd.read_csv("mock-datasets/ARIMA.csv")
 
 continent_filter = {}
 for country_code, continent in COUNTRY_ALPHA2_TO_CONTINENT_CODE.items():
@@ -81,9 +83,9 @@ def get_filtered_map():
                 dcc.RadioItems(
                     id='strictness',
                     options=[
-                        {'label': 'Lowest Level of Strictness', 'value': 'low'},
-                        {'label': 'Moderate Level of Strictness', 'value': 'med'},
-                        {'label': 'Highest Level of Strictness', 'value': 'high'}
+                        {'label': 'Lowest Level', 'value': 'low'},
+                        {'label': 'Moderate Level', 'value': 'med'},
+                        {'label': 'Highest Level', 'value': 'high'}
                     ],
                     value='low',
                     className="dcc_control"
@@ -91,15 +93,40 @@ def get_filtered_map():
                 html.Span("Policy Selected:", className="control_label"),
                 html.Span("Moderate", id="policy_selected", className="control_label"),
                 html.P(),
-                html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'})
-            ], className="pretty_container four columns"),
+                html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'}),
+                html.P("Show", className = "control_label"),
+                dcc.RadioItems(
+                    id = 'metric',
+                    options = [
+                        {'label': 'Positive Cases', 'value': 'positive'},
+                        {'label': 'Deaths', 'value': 'deaths'}
+                    ],
+                    value = 'positive'
+                )
+            ], className="pretty_container three columns"),
             html.Div([
                 html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
                 html.P(),
                 dcc.Graph(
                     id='world_map'
-                )
-            ], className="pretty_container eight columns", id='rightCol')
+                ),
+                html.Div([
+                    html.P(dcc.Markdown("### Prediction without considering the selected Policy")),
+                    html.Div([
+                       html.Div([
+                           dcc.Graph(id="arima")
+                       ], className = "ten columns"),
+                       html.Div(dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"), className = "pretty_container two columns")
+                    ], className = "row"),
+                    html.P(dcc.Markdown("### Prediction considering the selected policy")),
+                    html.Div([
+                        html.Div([
+                            dcc.Graph(id="pred")
+                        ], className = "ten columns"),
+                        html.Div(dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"), className = "pretty_container two columns")
+                    ], className = "row"),
+                ])
+            ], className="pretty_container nine columns", id='rightCol')
         ], className="row", ),
     ], id="mainContainer"
     )
@@ -114,14 +141,14 @@ def get_kpi_plots():
                 html.P("Select the Country", className="control_label"),
                 get_filter_by_country(id="kpi-country"),
                 html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'})
-            ], className="pretty_container four columns"),
+            ], className="pretty_container three columns"),
             html.Div([
                 html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
                 html.P(),
                 dcc.Graph(
                     id='new_cases'
                 )
-            ], className="pretty_container eight columns", id='rightCol')
+            ], className="pretty_container nine columns", id='rightCol')
         ], className="row", ),
     ], id="mainContainer"
     )
@@ -155,7 +182,6 @@ def get_filter_by_continent(id=None):
     )
 
 
-# app.layout = get_filtered_map()
 app.layout = html.Div([
     html.Div([
         html.H2('COVID Recovery Dashboard'),
@@ -169,13 +195,51 @@ app.layout = html.Div([
         "primary": "gold",
         "background": "cornsilk"
     }),
-    html.Div(id='tabs-content-props')
+    html.Div(id='tabs-conninet-props')
 ])
 
 
-@app.callback(Output('tabs-content-props', 'children'),
+@app.callback([Output('arima', 'figure'), Output('pred', 'figure')], [Input('country-selector', 'value'), Input('metric', 'value')])
+def render_arima(country_code, metric):
+    label = 'Positive Rate' if metric == 'positive' else 'Deaths'
+    country_code = "USA" #a2toa3[country_code]
+    filtered_arima = arima[arima["country"] == country_code]
+    x = filtered_arima['date']
+    y = filtered_arima['positive_rate']
+    yl = filtered_arima['positive_rate_low']
+    yh = filtered_arima['positive_rate_high']
+    fig = go.Figure([go.Scatter(
+        name=label,
+        x=x,
+        y=y,
+        mode='lines',
+        line=dict(color='rgb(31, 119, 180)'),
+    ),
+    go.Scatter(
+        name='Upper Bound',
+        x=x,
+        y=yh,
+        mode='lines',
+        marker=dict(color="#444"),
+        line=dict(width=0),
+        showlegend=False
+    ),
+    go.Scatter(
+        name='Lower Bound',
+        x=x,
+        y=yl,
+        marker=dict(color="#444"),
+        line=dict(width=0),
+        mode='lines',
+        fillcolor='rgba(68, 68, 68, 0.3)',
+        fill='tonexty',
+        showlegend=False)
+    ])
+    return fig, fig
+
+@app.callback(Output('tabs-conninet-props', 'children'),
               [Input('tabs-styled-with-props', 'value')])
-def render_content(tab):
+def render_conninet(tab):
     if tab == 'tab-1':
         return get_kpi_plots()
     elif tab == 'tab-2':
@@ -319,4 +383,4 @@ def update_graph(country_code, strictness):
 
 
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(debug = True)

@@ -1,2 +1,9 @@
-dva
-.idea/g
+.DS_STORE
+*.log
+.settings/
+
+*.gz
+
+.idea/
+
+*.code-workspace

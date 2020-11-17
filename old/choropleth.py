@@ -16,14 +16,14 @@ available_indicators = ['Sentiment']
 def get_dataframe():
     df = pd.read_csv('final_op_sentiments_daily.csv')
 
-
     def to_timestamp(value):
         return time.mktime(datetime.datetime.strptime(value, "%Y-%m-%d").timetuple())
 
     df['timestamp'] = df.Date.apply(lambda x: to_timestamp(x))
     df['Country Name'] = df.Country.apply(lambda x: country_name_to_country_alpha3(country_alpha2_to_country_name(x)))
-    df['Ratio'] = df.Positive/df.Negative
+    df['Ratio'] = df.Positive / df.Negative
     return df
+
 
 df = get_dataframe()
 app.layout = html.Div([
@@ -36,7 +36,7 @@ app.layout = html.Div([
                 value='Sentiment'
             )
         ],
-        style={'width': '49%', 'display': 'inline-block'}),
+            style={'width': '49%', 'display': 'inline-block'}),
     ], style={
         'borderBottom': 'thin lightgrey solid',
         'backgroundColor': 'rgb(250, 250, 250)',
@@ -58,8 +58,9 @@ app.layout = html.Div([
         min=df['timestamp'].min(),
         max=df['timestamp'].max(),
         value=df['timestamp'].max(),
-        marks={int(date): datetime.datetime.fromtimestamp(date).strftime('%m/%d') if i%14 == 0 else "" for i, date in enumerate(df['timestamp'].unique())},
-        step = None
+        marks={int(date): datetime.datetime.fromtimestamp(date).strftime('%m/%d') if i % 14 == 0 else "" for i, date in
+               enumerate(df['timestamp'].unique())},
+        step=None
     ), style={'width': '50%', 'padding': '0px 20px 20px 20px', 'size': '3px'})
 ])
 
@@ -67,18 +68,18 @@ app.layout = html.Div([
 @app.callback(
     dash.dependencies.Output('world_map', 'figure'),
     [
-     dash.dependencies.Input('crossfilter-year--slider', 'value')])
+        dash.dependencies.Input('crossfilter-year--slider', 'value')])
 def update_graph(date):
     date = datetime.datetime.fromtimestamp(date).strftime('%Y-%m-%d')
     dff = df.loc[df['Date'] == date].copy()
-    fig = px.choropleth(dff, locationmode = "ISO-3", locations = 'Country Name', color = 'Sentiment Score', color_continuous_scale="Viridis")
+    fig = px.choropleth(dff, locationmode="ISO-3", locations='Country Name', color='Sentiment Score',
+                        color_continuous_scale="Viridis")
     fig.update_layout(margin={'l': 40, 'b': 40, 't': 10, 'r': 0}, hovermode='closest')
 
     return fig
 
 
 def create_time_series(dff, text):
-
     fig = px.scatter(dff, x='Date', y='Ratio')
     # fig.add_trace(px.scatter(dff, x='Date', y='Negative'))
 

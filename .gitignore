@@ -1,2 +1,10 @@
-dva
+.DS_STORE
+*.log
+.settings/
+
+*.gz
+
 .idea/
+
+*.code-workspace
+dva

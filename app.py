@@ -3,6 +3,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import numpy as np
+from plotly.graph_objects import layout
+from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import json
 import plotly.express as px
@@ -47,6 +49,18 @@ def try_convert(country_name):
         return None
 
 
+def get_infection_policy():
+    inf_policy_df = pd.read_csv("dataset/infection_policy.csv")
+
+    def country_convert(x):
+        return country_name_to_country_alpha3(x)
+
+    inf_policy_df['Country Name'] = inf_policy_df.iso_code
+    inf_policy_df['New Cases'] = inf_policy_df.new_cases
+    inf_policy_df['New Deaths'] = inf_policy_df.new_deaths
+    return inf_policy_df
+
+
 flights_data = pd.read_csv("dataset/merged-airlines.csv")
 flights_data['CC'] = flights_data['source_airport_country'].apply(lambda x: try_convert(x))
 latlon = pd.read_csv("dataset/latlon.csv", encoding='latin-1')
@@ -55,6 +69,8 @@ inf_choropleth_recent_data = inf_policy[inf_policy.date == '2020-10-06']
 a2toa3 = map_country_alpha2_to_country_alpha3()
 a3toa2 = map_country_alpha3_to_country_alpha2()
 arima = pd.read_csv("mock-datasets/ARIMA.csv")
+
+inf_policy_df = get_infection_policy()
 
 continent_filter = {}
 for country_code, continent in COUNTRY_ALPHA2_TO_CONTINENT_CODE.items():
@@ -146,8 +162,16 @@ def get_kpi_plots():
                 html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
                 html.P(),
                 dcc.Graph(
+                    id='new_deaths_per_million',
+                    hoverData={'points': [{'location': 'USA'}]}
+                ),
+                dcc.Graph(
                     id='new_cases'
                 )
+            ], className="pretty_container nine columns", id='rightCol'),
+            html.Div([
+                dcc.Graph(id='x-time-series-new-cases'),
+                dcc.Graph(id='x-time-series-new-deaths')
             ], className="pretty_container nine columns", id='rightCol')
         ], className="row", ),
     ], id="mainContainer"
@@ -186,7 +210,7 @@ app.layout = html.Div([
     html.Div([
         html.H2('COVID Recovery Dashboard'),
         html.H5('Team 162 - DVA Nightwalkers')
-    ], style = {'textAlign': 'center'}),
+    ], style={'textAlign': 'center'}),
     dcc.Tabs(id="tabs-styled-with-props", value='tab-1', children=[
         dcc.Tab(label='Key Performance Indicators', value='tab-1', style=tab_style, selected_style=tab_selected_style),
         dcc.Tab(label='Prediction Engine', value='tab-2', style=tab_style, selected_style=tab_selected_style),
@@ -261,6 +285,7 @@ def continent_filer_options(continent):
             })
         return options
 
+
 @app.callback(Output('kpi-country', 'options'),
               [Input('kpi-continent', 'value')])
 def kpi_continent_filer_options(continent):
@@ -292,13 +317,42 @@ def kpi_plots(continent_code, country_code):
         "OC": None,
         "all": None
     }[continent_code]
-    fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code', color='positive_rate', color_continuous_scale="reds", template='seaborn', range_color = [0, 0.25], scope = continent)
+    fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code', color='positive_rate',
+                        color_continuous_scale="reds", template='seaborn', range_color=[0, 0.25], scope=continent)
     if continent_code == "OC":
         fig.update_geos(
-            lataxis_range = [-50, 0], lonaxis_range = [50, 250]
+            lataxis_range=[-50, 0], lonaxis_range=[50, 250]
         )
 
     return fig
+
+
+@app.callback(
+    Output('new_deaths_per_million', 'figure'),
+    [Input('kpi-continent', 'value'), Input('kpi-country', 'value')]
+)
+def kpi_plots(continent_code, country_code):
+    continent = {
+        "AF": "africa",
+        "AS": "asia",
+        "NA": "north america",
+        "SA": "south america",
+        "EU": "europe",
+        "AU": "australia",
+        "OC": None,
+        "all": None
+    }[continent_code]
+    fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code',
+                        color='new_deaths_per_million',
+                        color_continuous_scale='earth',
+                        template='plotly', range_color=[0, 0.25], scope=continent)
+    if continent_code == "OC":
+        fig.update_geos(
+            lataxis_range=[-50, 0], lonaxis_range=[50, 250]
+        )
+
+    return fig
+
 
 @app.callback(
     [Output('policy-indicator', 'children'), Output('policy_selected', 'children'), Output('policy_selected', 'style')],
@@ -380,6 +434,55 @@ def update_graph(country_code, strictness):
         'high': "Highest"
     }[strictness]
     return fig, dcc.Markdown(text.format(country, strictness_level))
+
+
+def create_time_series(dff, text):
+    fig = px.scatter(dff, x='date', y='new_cases')
+
+    fig.update_traces(mode='lines+markers')
+
+    fig.update_xaxes(showgrid=False)
+
+    fig.update_yaxes(type='linear')
+
+    fig.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
+                       xref='paper', yref='paper', showarrow=False, align='left',
+                       bgcolor='rgba(255, 255, 255, 0.5)', text=text)
+
+    fig.update_layout(height=225, margin={'l': 20, 'b': 30, 'r': 10, 't': 10})
+
+    return fig
+
+
+@app.callback(
+    dash.dependencies.Output('x-time-series-new-cases', 'figure'),
+    [dash.dependencies.Input('new_deaths_per_million', 'hoverData')])
+def update_y_time_series(hover_data):
+    country_name = hover_data['points'][0]['location']
+    dff = inf_policy_df[inf_policy_df['Country Name'] == country_name]
+    return create_time_series(dff, f"New cases spike at {country_name}")
+
+
+def create_time_series_deaths(dff, text):
+    fig = px.scatter(dff, x='date', y='new_deaths')
+    fig.update_traces(mode='lines+markers')
+    fig.update_xaxes(showgrid=False)
+    fig.update_yaxes(type='linear')
+    fig.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
+                       xref='paper', yref='paper', showarrow=False, align='left',
+                       bgcolor='rgba(255, 255, 255, 0.5)', text=text)
+    fig.update_layout(height=225, margin={'l': 20, 'b': 30, 'r': 10, 't': 10})
+
+    return fig
+
+
+@app.callback(
+    dash.dependencies.Output('x-time-series-new-deaths', 'figure'),
+    [dash.dependencies.Input('new_deaths_per_million', 'hoverData')])
+def update_y_time_series(hover_data):
+    country_name = hover_data['points'][0]['location']
+    dff = inf_policy_df[inf_policy_df['Country Name'] == country_name]
+    return create_time_series_deaths(dff, f"New deaths spike at {country_name}")
 
 
 if __name__ == '__main__':

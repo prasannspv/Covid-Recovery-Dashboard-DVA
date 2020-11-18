@@ -161,12 +161,13 @@ def get_kpi_plots():
             html.Div([
                 html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
                 html.P(),
-                dcc.Graph(
+                html.Div([dcc.Graph(
                     id='new_cases'
-                ),
-                dcc.Graph(
+                )]),
+                html.P(),
+                html.Div([dcc.Graph(
                     id='new_deaths_per_million'
-                )
+                )])
             ], className="pretty_container nine columns", id='rightCol'),
             html.Div([
                 dcc.Graph(id='x-time-series-new-cases'),
@@ -317,11 +318,12 @@ def kpi_plots(continent_code, country_code):
         "all": None
     }[continent_code]
     fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code', color='positive_rate',
-                        color_continuous_scale="earth", template='seaborn', range_color=[0, 0.2], scope=continent)
+                        color_continuous_scale="ylgnbu", template='seaborn', range_color=[0, 0.2], scope=continent)
     if continent_code == "OC":
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]
         )
+    fig.update_layout(margin = dict(l = 0, r = 0, t = 0, b = 0))
 
     return fig
 
@@ -341,15 +343,16 @@ def kpi_plots_deaths(continent_code, country_code):
         "OC": None,
         "all": None
     }[continent_code]
+    inf_choropleth_recent_data['new deaths/M'] = inf_choropleth_recent_data['new_deaths_per_million']
     fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code',
-                        color='new_deaths_per_million',
-                        color_continuous_scale='earth',
-                        template='plotly', range_color=[0, 0.5], scope=continent)
+                        color='new deaths/M',
+                        color_continuous_scale='matter',
+                        template='seaborn', range_color=[0, 0.5], scope=continent)
     if continent_code == "OC":
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]
         )
-
+    fig.update_layout(margin = dict(l = 0, r = 0, t = 0, b = 0))
     return fig
 
 
@@ -416,7 +419,8 @@ def update_graph(country_code, strictness):
     dest_lon = latlon.loc[latlon['name'] == country]['longitude'].iloc[0]
     dest_flights = flights_data[flights_data['dest_airport_country'] == country]
     fig = px.choropleth(dest_flights, locationmode="ISO-3", locations='CC', color='flight_capacity',
-                        color_continuous_scale="blues", template='seaborn')
+                        color_continuous_scale="spectral", template='seaborn', projection = 'natural earth')
+    fig.update_layout(margin = dict(l = 0, r = 0, t = 0, b = 0))
 
     for val in dest_flights.itertuples():
         source = val[1]
@@ -424,7 +428,7 @@ def update_graph(country_code, strictness):
             lat = latlon.loc[latlon['name'] == source]['latitude'].iloc[0]
             lon = latlon.loc[latlon['name'] == source]['longitude'].iloc[0]
             fig = fig.add_scattergeo(lat=[lat, dest_lat], lon=[lon, dest_lon], line=dict(width=1, color='#1F1F1F'),
-                                     mode='lines', showlegend=False)
+                                     mode='lines+text', text="✈️", showlegend=False,)
         except:
             continue
     strictness_level = {

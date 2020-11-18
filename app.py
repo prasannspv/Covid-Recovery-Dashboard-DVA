@@ -162,8 +162,7 @@ def get_kpi_plots():
                 html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
                 html.P(),
                 dcc.Graph(
-                    id='new_deaths_per_million',
-                    hoverData={'points': [{'location': 'USA'}]}
+                    id='new_deaths_per_million'
                 ),
                 dcc.Graph(
                     id='new_cases'
@@ -455,12 +454,12 @@ def create_time_series(dff, text):
 
 
 @app.callback(
-    dash.dependencies.Output('x-time-series-new-cases', 'figure'),
-    [dash.dependencies.Input('new_deaths_per_million', 'hoverData')])
-def update_y_time_series(hover_data):
-    country_name = hover_data['points'][0]['location']
-    dff = inf_policy_df[inf_policy_df['Country Name'] == country_name]
-    return create_time_series(dff, f"New cases spike at {country_name}")
+    Output('x-time-series-new-cases', 'figure'),
+    [Input('kpi-country', 'value')])
+def update_y_time_series(country_code):
+    country_code = a2toa3[country_code]
+    dff = inf_policy_df[inf_policy_df['iso_code'] == country_code]
+    return create_time_series(dff, f"New cases spike at {country_code}")
 
 
 def create_time_series_deaths(dff, text):
@@ -477,12 +476,12 @@ def create_time_series_deaths(dff, text):
 
 
 @app.callback(
-    dash.dependencies.Output('x-time-series-new-deaths', 'figure'),
-    [dash.dependencies.Input('new_deaths_per_million', 'hoverData')])
-def update_y_time_series(hover_data):
-    country_name = hover_data['points'][0]['location']
-    dff = inf_policy_df[inf_policy_df['Country Name'] == country_name]
-    return create_time_series_deaths(dff, f"New deaths spike at {country_name}")
+    Output('x-time-series-new-deaths', 'figure'),
+    [Input('kpi-country', 'value')])
+def update_y_time_series(country_code):
+    country_code = a2toa3[country_code]
+    dff = inf_policy_df[inf_policy_df['iso_code'] == country_code]
+    return create_time_series_deaths(dff, f"New deaths spike at {country_code}")
 
 
 if __name__ == '__main__':

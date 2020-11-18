@@ -317,7 +317,7 @@ def kpi_plots(continent_code, country_code):
         "all": None
     }[continent_code]
     fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code', color='positive_rate',
-                        color_continuous_scale="earth", template='seaborn', range_color=[0, 0.25], scope=continent)
+                        color_continuous_scale="earth", template='seaborn', range_color=[0, 0.2], scope=continent)
     if continent_code == "OC":
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]
@@ -344,7 +344,7 @@ def kpi_plots_deaths(continent_code, country_code):
     fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code',
                         color='new_deaths_per_million',
                         color_continuous_scale='earth',
-                        template='plotly', scope=continent)
+                        template='plotly', range_color=[0, 0.5], scope=continent)
     if continent_code == "OC":
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]

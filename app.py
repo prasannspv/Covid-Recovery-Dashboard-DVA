@@ -50,7 +50,7 @@ def try_convert(country_name):
 
 
 def get_infection_policy():
-    inf_policy_df = pd.read_csv("dataset/infection_policy.csv")
+    inf_policy_df = pd.read_csv("dataset/owid-covid-data.csv")
 
     def country_convert(x):
         return country_name_to_country_alpha3(x)
@@ -100,7 +100,6 @@ def get_filtered_map():
                     id='strictness',
                     options=[
                         {'label': 'Lowest Level', 'value': 'low'},
-                        {'label': 'Moderate Level', 'value': 'med'},
                         {'label': 'Highest Level', 'value': 'high'}
                     ],
                     value='low',

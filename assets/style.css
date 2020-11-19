@@ -137,21 +137,19 @@ body {
 }
 
 .data_text {
-    font-size;
+    font-size: 10px;
 }
 
 .dcc_control {
   margin: 0;
   padding: 5px;
-  width: calc(100%-40px);
+  width: calc(100% - 40px);
 }
 
 .control_label {
-  margin: 0;
-  padding: 10px;
-  padding-bottom: 0px;
-  margin-bottom: 0px;
-  width: calc(100%-40px);
+  padding: 10px 10px 0;
+  margin: 0 0 0;
+  width: calc(100% - 40px);
   font-weight: bold;
 }
 
@@ -518,3 +516,17 @@ there.
 .yes {
     color: green;
 }
+
+body {
+  font-size: 1.2rem;
+  font-family: Source Sans Pro, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: transparent linear-gradient(319deg, #006296, #003558) 0 0 no-repeat padding-box;
+  height: 100%;
+}
+
+h1, h6 {
+  color: white; !important;
+}
+

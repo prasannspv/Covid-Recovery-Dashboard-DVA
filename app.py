@@ -13,6 +13,9 @@ from pycountry_convert import country_alpha2_to_country_name, country_name_to_co
 from pycountry_convert.convert_country_alpha2_to_continent_code import COUNTRY_ALPHA2_TO_CONTINENT_CODE
 from dash.dependencies import Output, Input
 from pycountry_convert.country_wikipedia import WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2
+import time
+from flask import Flask, send_from_directory
+import datetime
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -28,13 +31,14 @@ tab_style = {
 tab_selected_style = {
     # 'borderTop': '1px solid #d6d6d6',
     # 'borderBottom': '1px solid #d6d6d6',
-    'backgroundColor': '#F2F2F2',
+    'backgroundColor': '#006296',
     'color': 'black',
     'fontWeight': 'bold'
     # 'padding': '6px'
 }
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app.title = 'COVID Recovery Dashboard'
 app.config['suppress_callback_exceptions'] = True
 server = app.server
 text = "For **{0}**, map shows the countries with which it should open its " \
@@ -55,10 +59,19 @@ def get_infection_policy():
     def country_convert(x):
         return country_name_to_country_alpha3(x)
 
+    def to_timestamp(value):
+        return time.mktime(datetime.datetime.strptime(value, "%Y-%m-%d").timetuple())
+
     inf_policy_df['Country Name'] = inf_policy_df.iso_code
     inf_policy_df['New Cases'] = inf_policy_df.new_cases
     inf_policy_df['New Deaths'] = inf_policy_df.new_deaths
+    inf_policy_df['timestamp'] = inf_policy_df.date.apply(lambda x: to_timestamp(x))
     return inf_policy_df
+
+
+def get_tweets_data():
+    tweets_df = pd.read_csv("dataset/sentiments_weekly.csv")
+    return tweets_df
 
 
 flights_data = pd.read_csv("dataset/merged-airlines.csv")
@@ -90,7 +103,7 @@ def get_filtered_map():
     return html.Div([
         html.Div([
             html.Div([
-                html.H6("Select Country and Policy", className="control_label"),
+                html.H5("Select Country and Policy", className="control_label"),
                 html.P("Filter by Continent", className="control_label"),
                 get_filter_by_continent(),
                 html.P("Select the Country", className="control_label"),
@@ -109,14 +122,14 @@ def get_filtered_map():
                 html.Span("Moderate", id="policy_selected", className="control_label"),
                 html.P(),
                 html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'}),
-                html.P("Show", className = "control_label"),
+                html.P("Show", className="control_label"),
                 dcc.RadioItems(
-                    id = 'metric',
-                    options = [
+                    id='metric',
+                    options=[
                         {'label': 'Positive Cases', 'value': 'positive'},
                         {'label': 'Deaths', 'value': 'deaths'}
                     ],
-                    value = 'positive'
+                    value='positive'
                 )
             ], className="pretty_container three columns"),
             html.Div([
@@ -128,18 +141,22 @@ def get_filtered_map():
                 html.Div([
                     html.P(dcc.Markdown("### Prediction without considering the selected Policy")),
                     html.Div([
-                       html.Div([
-                           dcc.Graph(id="arima")
-                       ], className = "ten columns"),
-                       html.Div(dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"), className = "pretty_container two columns")
-                    ], className = "row"),
+                        html.Div([
+                            dcc.Graph(id="arima")
+                        ], className="ten columns"),
+                        html.Div(
+                            dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"),
+                            className="pretty_container two columns")
+                    ], className="row"),
                     html.P(dcc.Markdown("### Prediction considering the selected policy")),
                     html.Div([
                         html.Div([
                             dcc.Graph(id="pred")
-                        ], className = "ten columns"),
-                        html.Div(dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"), className = "pretty_container two columns")
-                    ], className = "row"),
+                        ], className="ten columns"),
+                        html.Div(
+                            dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"),
+                            className="pretty_container two columns")
+                    ], className="row"),
                 ])
             ], className="pretty_container nine columns", id='rightCol')
         ], className="row", ),
@@ -148,30 +165,58 @@ def get_filtered_map():
 
 
 def get_kpi_plots():
+    df = get_infection_policy()
+
     return html.Div([
         html.Div([
             html.Div([
                 html.P("Select the Continent", className="control_label"),
-                get_filter_by_continent(id="kpi-continent"),
-                html.P("Select the Country", className="control_label"),
-                get_filter_by_country(id="kpi-country"),
-                html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'})
-            ], className="pretty_container three columns"),
+                get_filter_by_continent(id="kpi-continent")], className="six columns"),
             html.Div([
-                html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
-                html.P(),
+                html.P("Select the Country", className="control_label"),
+                get_filter_by_country(id="kpi-country")], className="six columns")
+        ], className="pretty_container row"),
+        html.Div([
+            html.Div([
+                html.H5("New COVID-19 cases spread across the world"),
                 html.Div([dcc.Graph(
-                    id='new_cases'
+                    id='new_cases', config={
+                        "displaylogo": False,
+                    }
                 )]),
                 html.P(),
+                html.H5("New COVID-19 deaths spread across the world"),
                 html.Div([dcc.Graph(
-                    id='new_deaths_per_million'
-                )])
-            ], className="pretty_container nine columns", id='rightCol'),
+                    id='new_deaths_per_million', config={
+                        "displaylogo": False,
+                    }
+                )]),
+                html.Div(dcc.Slider(
+                    id="death-cases-slider",
+                    min=df['timestamp'].min(),
+                    max=df['timestamp'].max(),
+                    value=df['timestamp'].max(),
+                    marks={int(date): datetime.datetime.fromtimestamp(date).strftime('%m/%d') if i % 30 == 0 else "" for
+                           i, date in
+                           enumerate(df['timestamp'].unique())},
+                    step=None
+                ))
+            ], className="pretty_container seven columns", id='rightCol'),
             html.Div([
-                dcc.Graph(id='x-time-series-new-cases'),
-                dcc.Graph(id='x-time-series-new-deaths')
-            ], className="pretty_container nine columns", id='rightCol')
+                html.H5("Monthly stats for spike"),
+                html.P("The stats are a trend for month. Select a rectangular region to drill down to week and day "),
+                dcc.Graph(id='x-time-series-new-cases', config={
+                    "displaylogo": False,
+                }),
+                html.Hr(),
+                dcc.Graph(id='x-time-series-new-deaths', config={
+                    "displaylogo": False,
+                }),
+                html.Hr(),
+                dcc.Graph(id='sentiment-tweets', config={
+                    "displaylogo": False,
+                })
+            ], className="pretty_container five columns", id='rightCol')
         ], className="row", ),
     ], id="mainContainer"
     )
@@ -189,7 +234,7 @@ def get_filter_by_country(id=None):
 
 def get_filter_by_continent(id=None):
     id = "continent-selector" if id is None else id
-    return dcc.RadioItems(
+    return dcc.Dropdown(
         id=id,
         options=[
             {'label': 'All', 'value': 'all'},
@@ -207,8 +252,8 @@ def get_filter_by_continent(id=None):
 
 app.layout = html.Div([
     html.Div([
-        html.H2('COVID Recovery Dashboard'),
-        html.H5('Team 162 - DVA Nightwalkers')
+        html.H1('COVID Recovery Dashboard'),
+        html.H6('Team 162 - DVA Nightwalkers')
     ], style={'textAlign': 'center'}),
     dcc.Tabs(id="tabs-styled-with-props", value='tab-1', children=[
         dcc.Tab(label='Key Performance Indicators', value='tab-1', style=tab_style, selected_style=tab_selected_style),
@@ -222,10 +267,11 @@ app.layout = html.Div([
 ])
 
 
-@app.callback([Output('arima', 'figure'), Output('pred', 'figure')], [Input('country-selector', 'value'), Input('metric', 'value')])
+@app.callback([Output('arima', 'figure'), Output('pred', 'figure')],
+              [Input('country-selector', 'value'), Input('metric', 'value')])
 def render_arima(country_code, metric):
     label = 'Positive Rate' if metric == 'positive' else 'Deaths'
-    country_code = "USA" #a2toa3[country_code]
+    country_code = "USA"  # a2toa3[country_code]
     filtered_arima = arima[arima["country"] == country_code]
     x = filtered_arima['date']
     y = filtered_arima['positive_rate']
@@ -238,27 +284,28 @@ def render_arima(country_code, metric):
         mode='lines',
         line=dict(color='rgb(31, 119, 180)'),
     ),
-    go.Scatter(
-        name='Upper Bound',
-        x=x,
-        y=yh,
-        mode='lines',
-        marker=dict(color="#444"),
-        line=dict(width=0),
-        showlegend=False
-    ),
-    go.Scatter(
-        name='Lower Bound',
-        x=x,
-        y=yl,
-        marker=dict(color="#444"),
-        line=dict(width=0),
-        mode='lines',
-        fillcolor='rgba(68, 68, 68, 0.3)',
-        fill='tonexty',
-        showlegend=False)
+        go.Scatter(
+            name='Upper Bound',
+            x=x,
+            y=yh,
+            mode='lines',
+            marker=dict(color="#444"),
+            line=dict(width=0),
+            showlegend=False
+        ),
+        go.Scatter(
+            name='Lower Bound',
+            x=x,
+            y=yl,
+            marker=dict(color="#444"),
+            line=dict(width=0),
+            mode='lines',
+            fillcolor='rgba(68, 68, 68, 0.3)',
+            fill='tonexty',
+            showlegend=False)
     ])
     return fig, fig
+
 
 @app.callback(Output('tabs-conninet-props', 'children'),
               [Input('tabs-styled-with-props', 'value')])
@@ -322,16 +369,17 @@ def kpi_plots(continent_code, country_code):
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]
         )
-    fig.update_layout(margin = dict(l = 0, r = 0, t = 0, b = 0))
+    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
     return fig
 
 
 @app.callback(
     Output('new_deaths_per_million', 'figure'),
-    [Input('kpi-continent', 'value'), Input('kpi-country', 'value')]
+    [Input('kpi-continent', 'value'), Input('kpi-country', 'value'), Input('death-cases-slider', 'value')]
 )
-def kpi_plots_deaths(continent_code, country_code):
+def kpi_plots_deaths(continent_code, country_code, date):
+    date = datetime.datetime.fromtimestamp(date).strftime('%Y-%m-%d')
     continent = {
         "AF": "africa",
         "AS": "asia",
@@ -342,6 +390,8 @@ def kpi_plots_deaths(continent_code, country_code):
         "OC": None,
         "all": None
     }[continent_code]
+    date = min(date, max(inf_policy.date))
+    inf_choropleth_recent_data = inf_policy[inf_policy.date == date]
     inf_choropleth_recent_data['new deaths/M'] = inf_choropleth_recent_data['new_deaths_per_million']
     fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code',
                         color='new deaths/M',
@@ -351,7 +401,7 @@ def kpi_plots_deaths(continent_code, country_code):
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]
         )
-    fig.update_layout(margin = dict(l = 0, r = 0, t = 0, b = 0))
+    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
     return fig
 
 
@@ -418,8 +468,8 @@ def update_graph(country_code, strictness):
     dest_lon = latlon.loc[latlon['name'] == country]['longitude'].iloc[0]
     dest_flights = flights_data[flights_data['dest_airport_country'] == country]
     fig = px.choropleth(dest_flights, locationmode="ISO-3", locations='CC', color='flight_capacity',
-                        color_continuous_scale="spectral", template='seaborn', projection = 'natural earth')
-    fig.update_layout(margin = dict(l = 0, r = 0, t = 0, b = 0))
+                        color_continuous_scale="spectral", template='seaborn', projection='natural earth')
+    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
     for val in dest_flights.itertuples():
         source = val[1]
@@ -427,7 +477,7 @@ def update_graph(country_code, strictness):
             lat = latlon.loc[latlon['name'] == source]['latitude'].iloc[0]
             lon = latlon.loc[latlon['name'] == source]['longitude'].iloc[0]
             fig = fig.add_scattergeo(lat=[lat, dest_lat], lon=[lon, dest_lon], line=dict(width=1, color='#1F1F1F'),
-                                     mode='lines+text', text="✈️", showlegend=False,)
+                                     mode='lines+text', text="✈️", showlegend=False)
         except:
             continue
     strictness_level = {
@@ -435,23 +485,20 @@ def update_graph(country_code, strictness):
         'med': "Moderate",
         'high': "Highest"
     }[strictness]
+
     return fig, dcc.Markdown(text.format(country, strictness_level))
 
 
 def create_time_series(dff, text):
     fig = px.scatter(dff, x='date', y='new_cases')
-
     fig.update_traces(mode='lines+markers')
-
-    fig.update_xaxes(showgrid=False)
-
+    fig.update_xaxes(showgrid=True)
     fig.update_yaxes(type='linear')
-
     fig.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
                        xref='paper', yref='paper', showarrow=False, align='left',
                        bgcolor='rgba(255, 255, 255, 0.5)', text=text)
-
-    fig.update_layout(height=225, margin={'l': 20, 'b': 30, 'r': 10, 't': 10})
+    fig.update_layout(height=300, margin={'l': 20, 'b': 30, 'r': 10, 't': 10})
+    fig.update_xaxes(rangeslider_visible=True)
 
     return fig
 
@@ -473,7 +520,8 @@ def create_time_series_deaths(dff, text):
     fig.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
                        xref='paper', yref='paper', showarrow=False, align='left',
                        bgcolor='rgba(255, 255, 255, 0.5)', text=text)
-    fig.update_layout(height=225, margin={'l': 20, 'b': 30, 'r': 10, 't': 10})
+    fig.update_layout(height=300, margin={'l': 20, 'b': 30, 'r': 10, 't': 10})
+    fig.update_xaxes(rangeslider_visible=True)
 
     return fig
 
@@ -487,5 +535,28 @@ def update_y_time_series(country_code):
     return create_time_series_deaths(dff, f"New deaths spike at {country_code}")
 
 
+def create_tweets(dff, text):
+    fig = px.scatter(dff, x='Date', y='Sentiment Score')
+    fig.update_traces(mode='lines+markers')
+    fig.update_xaxes(showgrid=True)
+    fig.update_yaxes(type='linear')
+    fig.add_annotation(x=0, y=0.85, xanchor='left', yanchor='bottom',
+                       xref='paper', yref='paper', showarrow=False, align='left',
+                       bgcolor='rgba(255, 255, 255, 0.5)', text=text)
+    fig.update_layout(height=300, margin={'l': 20, 'b': 30, 'r': 10, 't': 10})
+    fig.update_xaxes(rangeslider_visible=True)
+
+    return fig
+
+
+@app.callback(
+    Output('sentiment-tweets', 'figure'),
+    [Input('kpi-country', 'value')])
+def update_tweets(country_code):
+    df = get_tweets_data()
+    dff = df[df['Country'] == country_code]
+    return create_tweets(dff, f"Tweets on {country_code}")
+
+
 if __name__ == '__main__':
-    app.run_server(debug = True)
+    app.run_server(debug=True, port=7654)

@@ -70,7 +70,7 @@ def get_infection_policy():
 
 
 def get_tweets_data():
-    tweets_df = pd.read_csv("dataset/sentiments_weekly.csv")
+    tweets_df = pd.read_csv("dataset/final_op_sentiments_weekly.csv")
     return tweets_df
 
 

@@ -81,7 +81,9 @@ inf_policy = pd.read_csv("dataset/infection_policy.csv")
 inf_choropleth_recent_data = inf_policy[inf_policy.date == '2020-10-06']
 a2toa3 = map_country_alpha2_to_country_alpha3()
 a3toa2 = map_country_alpha3_to_country_alpha2()
-arima = pd.read_csv("mock-datasets/ARIMA.csv")
+arima = pd.read_csv("dataset/prediction.csv")
+risk_factors = pd.read_csv('dataset/risk_factor.csv')
+arima['CC'] = arima['location'].apply(lambda x: try_convert(x))
 
 inf_policy_df = get_infection_policy()
 
@@ -121,16 +123,7 @@ def get_filtered_map():
                 html.Span("Policy Selected:", className="control_label"),
                 html.Span("Moderate", id="policy_selected", className="control_label"),
                 html.P(),
-                html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'}),
-                html.P("Show", className="control_label"),
-                dcc.RadioItems(
-                    id='metric',
-                    options=[
-                        {'label': 'Positive Cases', 'value': 'positive'},
-                        {'label': 'Deaths', 'value': 'deaths'}
-                    ],
-                    value='positive'
-                )
+                html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'})
             ], className="pretty_container three columns"),
             html.Div([
                 html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
@@ -139,29 +132,16 @@ def get_filtered_map():
                     id='world_map'
                 ),
                 html.Div([
-                    html.P(dcc.Markdown("### Prediction without considering the selected Policy")),
                     html.Div([
-                        html.Div([
-                            dcc.Graph(id="arima")
-                        ], className="ten columns"),
-                        html.Div(
-                            dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"),
-                            className="pretty_container two columns")
-                    ], className="row"),
-                    html.P(dcc.Markdown("### Prediction considering the selected policy")),
-                    html.Div([
-                        html.Div([
-                            dcc.Graph(id="pred")
-                        ], className="ten columns"),
-                        html.Div(
-                            dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"),
-                            className="pretty_container two columns")
-                    ], className="row"),
-                ])
-            ], className="pretty_container nine columns", id='rightCol')
-        ], className="row", ),
-    ], id="mainContainer"
-    )
+                        dcc.Graph(id="arima")
+                    ], className="ten columns"),
+                    html.Div(
+                        dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"),
+                        className="pretty_container two columns")
+                ], className="row")
+            ], className="pretty_container nine columns")
+        ], className="pretty_container row", id='rightCol')
+    ])
 
 
 def get_kpi_plots():
@@ -267,44 +247,32 @@ app.layout = html.Div([
 ])
 
 
-@app.callback([Output('arima', 'figure'), Output('pred', 'figure')],
-              [Input('country-selector', 'value'), Input('metric', 'value')])
-def render_arima(country_code, metric):
-    label = 'Positive Rate' if metric == 'positive' else 'Deaths'
-    country_code = "USA"  # a2toa3[country_code]
-    filtered_arima = arima[arima["country"] == country_code]
+@app.callback(Output('arima', 'figure'),
+              [Input('country-selector', 'value'), Input('strictness', 'value')])
+def render_arima(country_code, strictness):
+    country_code = a2toa3[country_code]
+    filtered_arima = arima[arima["CC"] == country_code]
+    print(filtered_arima.head())
     x = filtered_arima['date']
-    y = filtered_arima['positive_rate']
-    yl = filtered_arima['positive_rate_low']
-    yh = filtered_arima['positive_rate_high']
-    fig = go.Figure([go.Scatter(
-        name=label,
-        x=x,
-        y=y,
-        mode='lines',
-        line=dict(color='rgb(31, 119, 180)'),
-    ),
+    y = filtered_arima['new_cases_per_million']
+    yl = filtered_arima[f'new_cases_per_million_{strictness}']
+    fig = go.Figure([
         go.Scatter(
-            name='Upper Bound',
-            x=x,
-            y=yh,
-            mode='lines',
-            marker=dict(color="#444"),
-            line=dict(width=0),
-            showlegend=False
-        ),
-        go.Scatter(
-            name='Lower Bound',
+            name='Adjusted New Cases Per Million',
             x=x,
             y=yl,
-            marker=dict(color="#444"),
-            line=dict(width=0),
+            line=dict(color='#FFA500'),
             mode='lines',
-            fillcolor='rgba(68, 68, 68, 0.3)',
-            fill='tonexty',
-            showlegend=False)
+        ),
+        go.Scatter(
+            name='New Cases Per Million',
+            x=x,
+            y=y,
+            mode='lines',
+            line=dict(color='red'),
+        )
     ])
-    return fig, fig
+    return fig
 
 
 @app.callback(Output('tabs-conninet-props', 'children'),
@@ -471,8 +439,12 @@ def update_graph(country_code, strictness):
                         color_continuous_scale="spectral", template='seaborn', projection='natural earth')
     fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
+    country_3 = a2toa3[country_code]
+    country_cr = risk_factors[risk_factors['iso_code'] == country_3]
     for val in dest_flights.itertuples():
         source = val[1]
+        if strictness == 'low' and not country_name_to_country_alpha3(source) in country_cr['sources_y'].iloc[0]:
+            continue
         try:
             lat = latlon.loc[latlon['name'] == source]['latitude'].iloc[0]
             lon = latlon.loc[latlon['name'] == source]['longitude'].iloc[0]

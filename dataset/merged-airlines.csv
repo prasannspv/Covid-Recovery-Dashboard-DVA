@@ -17,7 +17,7 @@ Algeria,Belgium,1,129
 Algeria,Burkina Faso,1,129
 Algeria,Canada,1,257
 Algeria,China,1,257
-Algeria,Cote d'Ivoire,1,184
+Algeria,Ivory Coast,1,184
 Algeria,Egypt,2,287
 Algeria,France,56,8616
 Algeria,Germany,3,393
@@ -43,8 +43,8 @@ Algeria,United Kingdom,2,287
 American Samoa,United States,1,229
 Angola,Brazil,2,792
 Angola,China,1,317
-Angola,Congo (Brazzaville),1,145
-Angola,Congo (Kinshasa),4,1108
+Angola,Congo,1,145
+Angola,Congo,4,1108
 Angola,Cuba,1,317
 Angola,Ethiopia,2,792
 Angola,France,1,396
@@ -62,7 +62,7 @@ Angola,United Arab Emirates,1,317
 Angola,United Kingdom,2,780
 Angola,Zimbabwe,1,145
 Anguilla,Antigua and Barbuda,1,56
-Anguilla,Netherlands Antilles,2,29
+Anguilla,Netherlands,2,29
 Anguilla,Puerto Rico,1,9
 Antigua and Barbuda,Barbados,1,184
 Antigua and Barbuda,Canada,1,158
@@ -112,7 +112,7 @@ Aruba,Canada,1,132
 Aruba,Colombia,1,158
 Aruba,Dominican Republic,2,174
 Aruba,Netherlands,1,229
-Aruba,Netherlands Antilles,2,486
+Aruba,Netherlands,2,486
 Aruba,Suriname,1,138
 Aruba,United States,16,2542
 Aruba,Venezuela,10,1397
@@ -237,7 +237,7 @@ Bahrain,United Arab Emirates,8,1634
 Bahrain,United Kingdom,3,1170
 Bahrain,Yemen,2,316
 Bangladesh,Bhutan,1,132
-Bangladesh,Burma,1,184
+Bangladesh,Myanmar,1,184
 Bangladesh,China,2,374
 Bangladesh,Hong Kong,2,554
 Bangladesh,India,9,1748
@@ -260,7 +260,7 @@ Barbados,Germany,1,229
 Barbados,Guyana,1,56
 Barbados,Jamaica,1,184
 Barbados,Martinique,1,56
-Barbados,Netherlands Antilles,1,184
+Barbados,Netherlands,1,184
 Barbados,Saint Lucia,1,56
 Barbados,United Kingdom,4,1341
 Barbados,United States,3,627
@@ -289,7 +289,7 @@ Belgium,Burundi,4,988
 Belgium,Cameroon,6,1512
 Belgium,Canada,6,1555
 Belgium,China,2,514
-Belgium,Cote d'Ivoire,2,554
+Belgium,Ivory Coast,2,554
 Belgium,Croatia,4,548
 Belgium,Cyprus,2,316
 Belgium,Czech Republic,3,354
@@ -333,8 +333,8 @@ Belize,El Salvador,1,5
 Belize,United States,8,1342
 Benin,Burkina Faso,1,120
 Benin,Cameroon,4,621
-Benin,Congo (Brazzaville),7,1228
-Benin,Cote d'Ivoire,7,1367
+Benin,Congo,7,1228
+Benin,Ivory Coast,7,1367
 Benin,Equatorial Guinea,2,200
 Benin,France,1,277
 Benin,Gabon,2,440
@@ -402,9 +402,9 @@ Brazil,United Kingdom,3,1119
 Brazil,United States,46,12137
 Brazil,Uruguay,7,1406
 Brazil,Venezuela,3,347
-British Virgin Islands,Dominica,1,19
-British Virgin Islands,Netherlands Antilles,2,39
-British Virgin Islands,Puerto Rico,5,115
+United Kingdom,Dominica,1,19
+United Kingdom,Netherlands,2,39
+United Kingdom,Puerto Rico,5,115
 Brunei,Australia,1,310
 Brunei,China,1,158
 Brunei,Hong Kong,2,316
@@ -434,29 +434,29 @@ Bulgaria,United Kingdom,7,1106
 Burkina Faso,Algeria,1,129
 Burkina Faso,Belgium,3,831
 Burkina Faso,Benin,1,120
-Burkina Faso,Cote d'Ivoire,6,1379
+Burkina Faso,Ivory Coast,6,1379
 Burkina Faso,Ethiopia,1,195
 Burkina Faso,France,1,277
 Burkina Faso,Mali,1,158
 Burkina Faso,Morocco,1,184
 Burkina Faso,Niger,6,1288
 Burkina Faso,Senegal,1,120
-Burma,Bangladesh,1,184
-Burma,Cambodia,1,132
-Burma,China,8,1360
-Burma,Hong Kong,1,197
-Burma,India,1,158
-Burma,Japan,1,229
-Burma,Malaysia,2,316
-Burma,Qatar,1,132
-Burma,Singapore,6,1067
-Burma,South Korea,1,229
-Burma,Taiwan,1,184
-Burma,Thailand,10,1854
-Burma,Vietnam,2,394
+Myanmar,Bangladesh,1,184
+Myanmar,Cambodia,1,132
+Myanmar,China,8,1360
+Myanmar,Hong Kong,1,197
+Myanmar,India,1,158
+Myanmar,Japan,1,229
+Myanmar,Malaysia,2,316
+Myanmar,Qatar,1,132
+Myanmar,Singapore,6,1067
+Myanmar,South Korea,1,229
+Myanmar,Taiwan,1,184
+Myanmar,Thailand,10,1854
+Myanmar,Vietnam,2,394
 Burundi,Kenya,5,1064
 Burundi,Rwanda,4,534
-Cambodia,Burma,1,132
+Cambodia,Myanmar,1,132
 Cambodia,China,9,1635
 Cambodia,Hong Kong,1,158
 Cambodia,Laos,5,1240
@@ -471,9 +471,9 @@ Cameroon,Belgium,6,1512
 Cameroon,Benin,4,621
 Cameroon,Central African Republic,1,184
 Cameroon,Chad,2,380
-Cameroon,Congo (Brazzaville),2,380
-Cameroon,Congo (Kinshasa),4,1108
-Cameroon,Cote d'Ivoire,1,132
+Cameroon,Congo,2,380
+Cameroon,Congo,4,1108
+Cameroon,Ivory Coast,1,132
 Cameroon,Equatorial Guinea,5,1192
 Cameroon,Ethiopia,2,458
 Cameroon,France,4,1180
@@ -591,7 +591,7 @@ China,Azerbaijan,2,440
 China,Bangladesh,2,374
 China,Belgium,2,514
 China,Brunei,1,158
-China,Burma,8,1360
+China,Myanmar,8,1360
 China,Cambodia,10,1793
 China,Canada,11,3265
 China,Denmark,3,831
@@ -663,7 +663,7 @@ Colombia,France,1,277
 Colombia,Germany,2,692
 Colombia,Guatemala,1,107
 Colombia,Mexico,4,498
-Colombia,Netherlands Antilles,1,155
+Colombia,Netherlands,1,155
 Colombia,Panama,5,25
 Colombia,Peru,2,137
 Colombia,Puerto Rico,1,132
@@ -671,26 +671,26 @@ Colombia,Spain,4,1028
 Colombia,United States,27,4355
 Colombia,Venezuela,3,86
 Comoros,Mayotte,1,184
-Comoros,Reunion,1,184
+Comoros,France,1,184
 Comoros,Tanzania,1,282
-Congo (Brazzaville),Angola,1,145
-Congo (Brazzaville),Benin,6,1070
-Congo (Brazzaville),Cameroon,2,390
-Congo (Brazzaville),Congo (Kinshasa),2,374
-Congo (Brazzaville),Ethiopia,2,426
-Congo (Brazzaville),France,4,954
-Congo (Brazzaville),Gabon,4,602
-Congo (Brazzaville),Kenya,2,368
-Congo (Brazzaville),Morocco,2,368
-Congo (Brazzaville),South Africa,1,158
-Congo (Kinshasa),Belgium,3,831
-Congo (Kinshasa),Cameroon,5,1298
-Congo (Kinshasa),Congo (Brazzaville),3,610
-Congo (Kinshasa),France,1,277
-Congo (Kinshasa),Kenya,3,194
-Congo (Kinshasa),South Africa,2,226
-Congo (Kinshasa),Turkey,1,198
-Congo (Kinshasa),Zambia,2,189
+Congo,Angola,1,145
+Congo,Benin,6,1070
+Congo,Cameroon,2,390
+Congo,Congo,2,374
+Congo,Ethiopia,2,426
+Congo,France,4,954
+Congo,Gabon,4,602
+Congo,Kenya,2,368
+Congo,Morocco,2,368
+Congo,South Africa,1,158
+Congo,Belgium,3,831
+Congo,Cameroon,5,1298
+Congo,Congo,3,610
+Congo,France,1,277
+Congo,Kenya,3,194
+Congo,South Africa,2,226
+Congo,Turkey,1,198
+Congo,Zambia,2,189
 Cook Islands,Australia,1,229
 Cook Islands,French Polynesia,2,146
 Cook Islands,United States,2,458
@@ -705,23 +705,23 @@ Costa Rica,Nicaragua,2,93
 Costa Rica,Panama,5,86
 Costa Rica,Peru,1,158
 Costa Rica,United States,28,4860
-Cote d'Ivoire,Algeria,1,184
-Cote d'Ivoire,Belgium,3,771
-Cote d'Ivoire,Benin,2,303
-Cote d'Ivoire,Burkina Faso,6,1349
-Cote d'Ivoire,Cameroon,1,132
-Cote d'Ivoire,France,3,911
-Cote d'Ivoire,Gabon,1,132
-Cote d'Ivoire,Ghana,6,1329
-Cote d'Ivoire,Guinea,1,76
-Cote d'Ivoire,Liberia,1,155
-Cote d'Ivoire,Mali,2,277
-Cote d'Ivoire,Nigeria,3,520
-Cote d'Ivoire,Senegal,2,290
-Cote d'Ivoire,Sierra Leone,1,155
-Cote d'Ivoire,Togo,3,831
-Cote d'Ivoire,Tunisia,1,158
-Cote d'Ivoire,Turkey,1,198
+Ivory Coast,Algeria,1,184
+Ivory Coast,Belgium,3,771
+Ivory Coast,Benin,2,303
+Ivory Coast,Burkina Faso,6,1349
+Ivory Coast,Cameroon,1,132
+Ivory Coast,France,3,911
+Ivory Coast,Gabon,1,132
+Ivory Coast,Ghana,6,1329
+Ivory Coast,Guinea,1,76
+Ivory Coast,Liberia,1,155
+Ivory Coast,Mali,2,277
+Ivory Coast,Nigeria,3,520
+Ivory Coast,Senegal,2,290
+Ivory Coast,Sierra Leone,1,155
+Ivory Coast,Togo,3,831
+Ivory Coast,Tunisia,1,158
+Ivory Coast,Turkey,1,198
 Croatia,Austria,2,180
 Croatia,Belgium,4,548
 Croatia,Bosnia and Herzegovina,1,90
@@ -874,9 +874,9 @@ Djibouti,Somalia,5,925
 Djibouti,Turkey,1,158
 Djibouti,United Arab Emirates,3,577
 Djibouti,Yemen,2,136
-Dominica,British Virgin Islands,1,19
+Dominica,United Kingdom,1,19
 Dominica,Guadeloupe,3,177
-Dominica,Netherlands Antilles,3,140
+Dominica,Netherlands,3,140
 Dominica,Puerto Rico,3,122
 Dominica,Saint Vincent and the Grenadines,1,56
 Dominican Republic,Antigua and Barbuda,4,1057
@@ -895,7 +895,7 @@ Dominican Republic,Haiti,2,38
 Dominican Republic,Italy,3,687
 Dominican Republic,Jamaica,2,259
 Dominican Republic,Netherlands,1,229
-Dominican Republic,Netherlands Antilles,5,479
+Dominican Republic,Netherlands,5,479
 Dominican Republic,Panama,2,234
 Dominican Republic,Peru,1,158
 Dominican Republic,Puerto Rico,8,355
@@ -1008,8 +1008,8 @@ Ethiopia,Bahrain,1,158
 Ethiopia,Burkina Faso,1,195
 Ethiopia,Cameroon,2,458
 Ethiopia,China,5,1616
-Ethiopia,Congo (Brazzaville),1,184
-Ethiopia,Congo (Kinshasa),1,242
+Ethiopia,Congo,1,184
+Ethiopia,Congo,1,242
 Ethiopia,Djibouti,1,5
 Ethiopia,Egypt,1,184
 Ethiopia,Equatorial Guinea,2,458
@@ -1103,9 +1103,9 @@ France,Central African Republic,1,317
 France,Chad,1,247
 France,China,7,2165
 France,Colombia,1,277
-France,Congo (Brazzaville),4,954
-France,Congo (Kinshasa),1,277
-France,Cote d'Ivoire,3,911
+France,Congo,4,954
+France,Congo,1,277
+France,Ivory Coast,3,911
 France,Croatia,9,1334
 France,Cuba,1,396
 France,Cyprus,3,474
@@ -1154,7 +1154,7 @@ France,Moldova,1,5
 France,Montenegro,2,218
 France,Morocco,50,8654
 France,Netherlands,12,1327
-France,Netherlands Antilles,6,1088
+France,Netherlands,6,1088
 France,Niger,2,504
 France,Nigeria,4,998
 France,Norway,6,530
@@ -1164,7 +1164,7 @@ France,Panama,1,317
 France,Peru,2,792
 France,Poland,13,1862
 France,Portugal,33,5396
-France,Reunion,4,1387
+France,France,4,1387
 France,Romania,5,770
 France,Russia,6,948
 France,Saudi Arabia,4,1191
@@ -1203,8 +1203,8 @@ French Polynesia,New Zealand,2,572
 French Polynesia,United States,7,2007
 Gabon,Benin,2,440
 Gabon,Cameroon,1,190
-Gabon,Congo (Brazzaville),4,602
-Gabon,Cote d'Ivoire,1,132
+Gabon,Congo,4,602
+Gabon,Ivory Coast,1,132
 Gabon,Equatorial Guinea,1,184
 Gabon,Ethiopia,1,184
 Gabon,Morocco,1,184
@@ -1295,7 +1295,7 @@ Germany,Montenegro,2,218
 Germany,Morocco,15,2552
 Germany,Namibia,1,247
 Germany,Netherlands,10,1056
-Germany,Netherlands Antilles,1,247
+Germany,Netherlands,1,247
 Germany,Nigeria,4,1108
 Germany,Norway,5,764
 Germany,Poland,17,1990
@@ -1327,7 +1327,7 @@ Germany,United Kingdom,57,8134
 Germany,United States,88,27051
 Germany,Venezuela,1,277
 Germany,Vietnam,4,1560
-Ghana,Cote d'Ivoire,7,1527
+Ghana,Ivory Coast,7,1527
 Ghana,Egypt,1,184
 Ghana,Ethiopia,1,184
 Ghana,Germany,1,277
@@ -1400,7 +1400,7 @@ Guadeloupe,Dominican Republic,3,428
 Guadeloupe,France,4,507
 Guadeloupe,Haiti,1,282
 Guadeloupe,Martinique,3,632
-Guadeloupe,Netherlands Antilles,1,73
+Guadeloupe,Netherlands,1,73
 Guadeloupe,Puerto Rico,2,66
 Guadeloupe,United States,2,368
 Guam,Australia,1,184
@@ -1422,7 +1422,7 @@ Guernsey,Germany,1,90
 Guernsey,Jersey,2,180
 Guernsey,Netherlands,1,48
 Guernsey,United Kingdom,10,1728
-Guinea,Cote d'Ivoire,1,76
+Guinea,Ivory Coast,1,76
 Guinea,France,1,247
 Guinea,Guinea-Bissau,1,132
 Guinea,Mali,1,282
@@ -1442,7 +1442,7 @@ Guyana,Venezuela,1,5
 Haiti,Canada,1,229
 Haiti,Dominican Republic,3,315
 Haiti,Guadeloupe,2,440
-Haiti,Netherlands Antilles,1,155
+Haiti,Netherlands,1,155
 Haiti,Turks and Caicos Islands,2,49
 Haiti,United States,9,1571
 Honduras,Cayman Islands,1,138
@@ -1455,7 +1455,7 @@ Honduras,United States,12,2205
 Hong Kong,Australia,13,3601
 Hong Kong,Bangladesh,2,554
 Hong Kong,Brunei,2,316
-Hong Kong,Burma,1,197
+Hong Kong,Myanmar,1,197
 Hong Kong,Cambodia,1,158
 Hong Kong,Canada,4,1505
 Hong Kong,China,68,12299
@@ -1529,7 +1529,7 @@ India,Bahrain,6,1104
 India,Bangladesh,9,1748
 India,Belgium,3,801
 India,Bhutan,2,264
-India,Burma,1,158
+India,Myanmar,1,158
 India,China,6,1233
 India,Egypt,2,368
 India,Ethiopia,4,895
@@ -1551,7 +1551,7 @@ India,Nepal,5,809
 India,Netherlands,1,257
 India,Oman,19,3320
 India,Qatar,12,2668
-India,Reunion,1,184
+India,France,1,184
 India,Russia,1,425
 India,Saudi Arabia,33,9568
 India,Singapore,22,4206
@@ -1778,7 +1778,7 @@ Jamaica,Dominican Republic,1,30
 Jamaica,Germany,1,229
 Jamaica,Guyana,1,195
 Jamaica,Netherlands,1,229
-Jamaica,Netherlands Antilles,2,235
+Jamaica,Netherlands,2,235
 Jamaica,Panama,1,5
 Jamaica,Trinidad and Tobago,1,184
 Jamaica,Turks and Caicos Islands,1,30
@@ -1786,7 +1786,7 @@ Jamaica,United Kingdom,3,1084
 Jamaica,United States,31,4808
 Japan,Australia,15,3905
 Japan,Austria,2,634
-Japan,Burma,1,229
+Japan,Myanmar,1,229
 Japan,Canada,10,2718
 Japan,China,117,21645
 Japan,Denmark,1,277
@@ -1881,8 +1881,8 @@ Kenya,Belgium,4,988
 Kenya,Botswana,1,5
 Kenya,Cameroon,1,5
 Kenya,China,2,850
-Kenya,Congo (Brazzaville),1,190
-Kenya,Congo (Kinshasa),2,195
+Kenya,Congo,1,190
+Kenya,Congo,2,195
 Kenya,Djibouti,1,5
 Kenya,Egypt,1,158
 Kenya,Eritrea,1,158
@@ -2003,7 +2003,7 @@ Lebanon,United Kingdom,1,197
 Lebanon,Yemen,1,257
 Lesotho,South Africa,2,50
 Liberia,Belgium,3,831
-Liberia,Cote d'Ivoire,1,155
+Liberia,Ivory Coast,1,155
 Liberia,Ghana,3,500
 Liberia,Morocco,1,145
 Liberia,Nigeria,1,132
@@ -2076,7 +2076,7 @@ Macedonia,United Kingdom,1,158
 Madagascar,France,5,1385
 Madagascar,Mauritius,1,138
 Madagascar,Mayotte,2,420
-Madagascar,Reunion,6,888
+Madagascar,France,6,888
 Madagascar,South Africa,2,250
 Madagascar,Thailand,2,554
 Malawi,Ethiopia,1,184
@@ -2086,7 +2086,7 @@ Malawi,Zambia,2,34
 Malaysia,Australia,13,3553
 Malaysia,Bangladesh,4,868
 Malaysia,Brunei,6,1222
-Malaysia,Burma,2,316
+Malaysia,Myanmar,2,316
 Malaysia,Cambodia,4,684
 Malaysia,China,27,5266
 Malaysia,France,3,1677
@@ -2136,7 +2136,7 @@ Maldives,United Kingdom,1,390
 Mali,Algeria,1,184
 Mali,Benin,3,585
 Mali,Burkina Faso,1,158
-Mali,Cote d'Ivoire,3,397
+Mali,Ivory Coast,3,397
 Mali,Ethiopia,2,444
 Mali,France,2,435
 Mali,Guinea,1,282
@@ -2198,14 +2198,14 @@ Mauritius,India,5,1235
 Mauritius,Italy,1,229
 Mauritius,Kenya,2,264
 Mauritius,Madagascar,1,138
-Mauritius,Reunion,4,1150
+Mauritius,France,4,1150
 Mauritius,Russia,1,229
 Mauritius,Seychelles,1,158
 Mauritius,South Africa,3,402
 Mauritius,United Kingdom,3,909
 Mayotte,Comoros,1,184
 Mayotte,Madagascar,4,924
-Mayotte,Reunion,1,247
+Mayotte,France,1,247
 Mexico,Argentina,1,295
 Mexico,Brazil,2,647
 Mexico,Canada,17,2899
@@ -2265,8 +2265,8 @@ Morocco,Benin,1,184
 Morocco,Brazil,1,229
 Morocco,Cameroon,2,368
 Morocco,Canada,1,229
-Morocco,Congo (Brazzaville),2,368
-Morocco,Congo (Kinshasa),1,184
+Morocco,Congo,2,368
+Morocco,Congo,1,184
 Morocco,Egypt,2,381
 Morocco,Equatorial Guinea,1,184
 Morocco,France,53,9102
@@ -2361,7 +2361,7 @@ Netherlands,Macedonia,1,158
 Netherlands,Malaysia,3,1024
 Netherlands,Malta,1,184
 Netherlands,Morocco,6,1052
-Netherlands,Netherlands Antilles,4,1278
+Netherlands,Netherlands,4,1278
 Netherlands,Nigeria,1,257
 Netherlands,Norway,3,15
 Netherlands,Panama,1,390
@@ -2390,28 +2390,28 @@ Netherlands,United Arab Emirates,10,3199
 Netherlands,United Kingdom,26,2661
 Netherlands,United States,20,5518
 Netherlands,Zimbabwe,3,751
-Netherlands Antilles,Anguilla,2,29
-Netherlands Antilles,Aruba,3,423
-Netherlands Antilles,Barbados,1,184
-Netherlands Antilles,British Virgin Islands,2,39
-Netherlands Antilles,Colombia,1,155
-Netherlands Antilles,Dominica,4,196
-Netherlands Antilles,Dominican Republic,6,552
-Netherlands Antilles,France,5,1068
-Netherlands Antilles,Germany,1,247
-Netherlands Antilles,Guadeloupe,1,73
-Netherlands Antilles,Haiti,1,155
-Netherlands Antilles,Jamaica,2,235
-Netherlands Antilles,Netherlands,4,1125
-Netherlands Antilles,Panama,1,5
-Netherlands Antilles,Puerto Rico,2,38
-Netherlands Antilles,Saint Kitts and Nevis,2,40
-Netherlands Antilles,Saint Lucia,1,56
-Netherlands Antilles,Suriname,1,155
-Netherlands Antilles,Trinidad and Tobago,3,558
-Netherlands Antilles,United States,19,3504
-Netherlands Antilles,Venezuela,4,561
-Netherlands Antilles,Virgin Islands,2,112
+Netherlands,Anguilla,2,29
+Netherlands,Aruba,3,423
+Netherlands,Barbados,1,184
+Netherlands,United Kingdom,2,39
+Netherlands,Colombia,1,155
+Netherlands,Dominica,4,196
+Netherlands,Dominican Republic,6,552
+Netherlands,France,5,1068
+Netherlands,Germany,1,247
+Netherlands,Guadeloupe,1,73
+Netherlands,Haiti,1,155
+Netherlands,Jamaica,2,235
+Netherlands,Netherlands,4,1125
+Netherlands,Panama,1,5
+Netherlands,Puerto Rico,2,38
+Netherlands,Saint Kitts and Nevis,2,40
+Netherlands,Saint Lucia,1,56
+Netherlands,Suriname,1,155
+Netherlands,Trinidad and Tobago,3,558
+Netherlands,United States,19,3504
+Netherlands,Venezuela,4,561
+Netherlands,United States,2,112
 New Caledonia,Australia,1,158
 New Caledonia,Fiji,1,158
 New Caledonia,French Polynesia,1,247
@@ -2442,7 +2442,7 @@ Niger,France,2,494
 Nigeria,Benin,1,184
 Nigeria,Cameroon,2,322
 Nigeria,Chad,1,184
-Nigeria,Cote d'Ivoire,3,520
+Nigeria,Ivory Coast,3,520
 Nigeria,Egypt,3,526
 Nigeria,Equatorial Guinea,2,559
 Nigeria,Ethiopia,3,829
@@ -2565,7 +2565,7 @@ Panama,Honduras,1,5
 Panama,Jamaica,1,5
 Panama,Mexico,4,20
 Panama,Netherlands,1,390
-Panama,Netherlands Antilles,1,5
+Panama,Netherlands,1,5
 Panama,Peru,1,5
 Panama,United States,25,4500
 Panama,Uruguay,1,184
@@ -2693,7 +2693,7 @@ Portugal,United States,6,1294
 Portugal,Venezuela,3,741
 Puerto Rico,Anguilla,1,9
 Puerto Rico,Antigua and Barbuda,1,282
-Puerto Rico,British Virgin Islands,5,115
+Puerto Rico,United Kingdom,5,115
 Puerto Rico,Colombia,1,132
 Puerto Rico,Dominica,3,122
 Puerto Rico,Dominican Republic,8,355
@@ -2701,12 +2701,12 @@ Puerto Rico,France,1,9
 Puerto Rico,Germany,1,229
 Puerto Rico,Guadeloupe,2,66
 Puerto Rico,Martinique,2,66
-Puerto Rico,Netherlands Antilles,2,38
+Puerto Rico,Netherlands,2,38
 Puerto Rico,Saint Kitts and Nevis,2,42
 Puerto Rico,Turks and Caicos Islands,1,30
 Puerto Rico,United States,25,4111
 Puerto Rico,Venezuela,1,184
-Puerto Rico,Virgin Islands,2,10
+Puerto Rico,United States,2,10
 Qatar,Algeria,1,396
 Qatar,Australia,2,713
 Qatar,Austria,1,158
@@ -2714,7 +2714,7 @@ Qatar,Azerbaijan,2,316
 Qatar,Bahrain,10,2804
 Qatar,Belgium,1,242
 Qatar,Brazil,1,317
-Qatar,Burma,1,132
+Qatar,Myanmar,1,132
 Qatar,Canada,1,396
 Qatar,China,5,1682
 Qatar,Cyprus,1,158
@@ -2754,12 +2754,12 @@ Qatar,United Arab Emirates,2,548
 Qatar,United States,11,4089
 Qatar,Vietnam,1,247
 Qatar,Yemen,3,536
-Reunion,Comoros,1,184
-Reunion,France,3,1110
-Reunion,India,1,184
-Reunion,Madagascar,4,742
-Reunion,Mauritius,4,1150
-Reunion,South Africa,1,184
+France,Comoros,1,184
+France,France,3,1110
+France,India,1,184
+France,Madagascar,4,742
+France,Mauritius,4,1150
+France,South Africa,1,184
 Romania,Austria,6,506
 Romania,Belgium,2,316
 Romania,Bulgaria,2,146
@@ -2858,7 +2858,7 @@ Rwanda,Uganda,7,1601
 Rwanda,United Arab Emirates,1,184
 Saint Kitts and Nevis,Antigua and Barbuda,3,789
 Saint Kitts and Nevis,Bahamas,1,190
-Saint Kitts and Nevis,Netherlands Antilles,2,40
+Saint Kitts and Nevis,Netherlands,2,40
 Saint Kitts and Nevis,Puerto Rico,2,42
 Saint Kitts and Nevis,United States,2,368
 Saint Lucia,Antigua and Barbuda,2,559
@@ -2921,7 +2921,7 @@ Senegal,Benin,1,158
 Senegal,Burkina Faso,1,120
 Senegal,Cameroon,1,132
 Senegal,Cape Verde,1,282
-Senegal,Cote d'Ivoire,2,290
+Senegal,Ivory Coast,2,290
 Senegal,France,2,792
 Senegal,Gambia,3,686
 Senegal,Ghana,3,399
@@ -2967,7 +2967,7 @@ Seychelles,Russia,1,229
 Seychelles,South Africa,2,494
 Seychelles,Sri Lanka,2,316
 Seychelles,United Arab Emirates,3,712
-Sierra Leone,Cote d'Ivoire,1,155
+Sierra Leone,Ivory Coast,1,155
 Sierra Leone,France,2,494
 Sierra Leone,Gambia,2,277
 Sierra Leone,Ghana,2,339
@@ -2978,7 +2978,7 @@ Sierra Leone,United Kingdom,2,361
 Singapore,Australia,33,9661
 Singapore,Bangladesh,4,809
 Singapore,Brunei,1,158
-Singapore,Burma,5,909
+Singapore,Myanmar,5,909
 Singapore,Cambodia,5,790
 Singapore,China,30,5676
 Singapore,Denmark,2,634
@@ -3038,7 +3038,7 @@ Somalia,Kenya,1,190
 South Africa,Angola,1,317
 South Africa,Australia,2,608
 South Africa,Botswana,7,741
-South Africa,Congo (Kinshasa),2,226
+South Africa,Congo,2,226
 South Africa,Egypt,2,514
 South Africa,Ethiopia,2,634
 South Africa,France,2,1360
@@ -3056,7 +3056,7 @@ South Africa,Namibia,5,432
 South Africa,Netherlands,3,1170
 South Africa,Nigeria,1,247
 South Africa,Qatar,2,484
-South Africa,Reunion,1,184
+South Africa,France,1,184
 South Africa,Saudi Arabia,1,317
 South Africa,Senegal,3,831
 South Africa,Seychelles,2,494
@@ -3073,7 +3073,7 @@ South Africa,Zambia,6,593
 South Africa,Zimbabwe,7,1039
 South Korea,Australia,5,1505
 South Korea,Austria,1,396
-South Korea,Burma,1,229
+South Korea,Myanmar,1,229
 South Korea,Cambodia,4,788
 South Korea,Canada,4,1092
 South Korea,China,103,19759
@@ -3219,7 +3219,7 @@ Suriname,Brazil,1,138
 Suriname,French Guiana,1,138
 Suriname,Guyana,1,138
 Suriname,Netherlands,2,687
-Suriname,Netherlands Antilles,1,155
+Suriname,Netherlands,1,155
 Suriname,Trinidad and Tobago,3,460
 Swaziland,South Africa,2,50
 Sweden,Austria,3,15
@@ -3318,7 +3318,7 @@ Switzerland,United Kingdom,5,493
 Switzerland,United States,26,6771
 Taiwan,Australia,3,801
 Taiwan,Austria,1,277
-Taiwan,Burma,1,184
+Taiwan,Myanmar,1,184
 Taiwan,Cambodia,3,534
 Taiwan,Canada,3,977
 Taiwan,China,154,28562
@@ -3366,7 +3366,7 @@ Thailand,Australia,12,3978
 Thailand,Austria,3,881
 Thailand,Bangladesh,7,1500
 Thailand,Belgium,2,850
-Thailand,Burma,10,1854
+Thailand,Myanmar,10,1854
 Thailand,Cambodia,7,1282
 Thailand,China,65,12021
 Thailand,Denmark,2,850
@@ -3420,7 +3420,7 @@ Trinidad and Tobago,Barbados,1,229
 Trinidad and Tobago,Canada,1,184
 Trinidad and Tobago,Grenada,1,5
 Trinidad and Tobago,Jamaica,1,184
-Trinidad and Tobago,Netherlands Antilles,3,558
+Trinidad and Tobago,Netherlands,3,558
 Trinidad and Tobago,Saint Lucia,4,1135
 Trinidad and Tobago,Suriname,3,460
 Trinidad and Tobago,United Kingdom,1,229
@@ -3429,7 +3429,7 @@ Trinidad and Tobago,Venezuela,2,78
 Tunisia,Algeria,2,258
 Tunisia,Belgium,1,158
 Tunisia,Burkina Faso,1,158
-Tunisia,Cote d'Ivoire,1,158
+Tunisia,Ivory Coast,1,158
 Tunisia,France,18,2576
 Tunisia,Germany,27,4341
 Tunisia,Italy,2,564
@@ -3456,7 +3456,7 @@ Turkey,Bosnia and Herzegovina,2,466
 Turkey,Brazil,1,277
 Turkey,Cameroon,2,396
 Turkey,China,5,1841
-Turkey,Congo (Kinshasa),1,198
+Turkey,Congo,1,198
 Turkey,Croatia,1,132
 Turkey,Cyprus,13,2288
 Turkey,Czech Republic,1,184
@@ -3809,7 +3809,7 @@ United States,Martinique,2,368
 United States,Mexico,233,34612
 United States,Morocco,1,229
 United States,Netherlands,21,5775
-United States,Netherlands Antilles,20,3688
+United States,Netherlands,20,3688
 United States,New Zealand,4,934
 United States,Nicaragua,2,342
 United States,Nigeria,2,539
@@ -3842,7 +3842,7 @@ United States,United Arab Emirates,24,10076
 United States,United Kingdom,133,38661
 United States,Uruguay,2,458
 United States,Venezuela,6,1202
-United States,Virgin Islands,17,3223
+United States,United States,17,3223
 Uruguay,Argentina,9,1786
 Uruguay,Brazil,7,1406
 Uruguay,Chile,1,132
@@ -3889,7 +3889,7 @@ Venezuela,Grenada,1,5
 Venezuela,Guyana,1,5
 Venezuela,Italy,1,257
 Venezuela,Mexico,1,190
-Venezuela,Netherlands Antilles,4,561
+Venezuela,Netherlands,4,561
 Venezuela,Panama,5,811
 Venezuela,Peru,2,137
 Venezuela,Portugal,3,741
@@ -3898,7 +3898,7 @@ Venezuela,Spain,4,1010
 Venezuela,Trinidad and Tobago,2,78
 Venezuela,United States,6,1202
 Vietnam,Australia,4,1028
-Vietnam,Burma,2,394
+Vietnam,Myanmar,2,394
 Vietnam,Cambodia,12,2558
 Vietnam,China,21,3846
 Vietnam,France,6,2267
@@ -3918,10 +3918,10 @@ Vietnam,South Korea,6,1182
 Vietnam,Taiwan,9,1301
 Vietnam,Thailand,9,2208
 Vietnam,United Arab Emirates,2,564
-Virgin Islands,Anguilla,1,56
-Virgin Islands,Netherlands Antilles,1,56
-Virgin Islands,Puerto Rico,2,10
-Virgin Islands,United States,18,3495
+United States,Anguilla,1,56
+United States,Netherlands,1,56
+United States,Puerto Rico,2,10
+United States,United States,18,3495
 Wallis and Futuna,Fiji,1,158
 Wallis and Futuna,New Caledonia,1,158
 Western Sahara,Morocco,4,736
@@ -3943,7 +3943,7 @@ Yemen,Turkey,1,184
 Yemen,United Arab Emirates,10,1712
 Zambia,Angola,1,145
 Zambia,Botswana,1,73
-Zambia,Congo (Kinshasa),1,5
+Zambia,Congo,1,5
 Zambia,Ethiopia,1,242
 Zambia,Kenya,2,10
 Zambia,Malawi,1,29

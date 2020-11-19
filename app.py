@@ -451,7 +451,7 @@ def update_graph(country_code, strictness):
 
 
 def create_time_series(dff, text):
-    fig = px.scatter(dff, x='date', y='new_cases', animation_frame = 'date')
+    fig = px.scatter(dff, x='date', y='new_cases')
     fig.update_traces(mode='lines+markers')
     fig.update_xaxes(showgrid=True)
     fig.update_yaxes(type='linear')

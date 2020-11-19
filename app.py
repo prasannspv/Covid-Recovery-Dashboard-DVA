@@ -181,7 +181,7 @@ def get_kpi_plots():
                            enumerate(df['timestamp'].unique())},
                     step=None
                 ))
-            ], className="pretty_container seven columns", id='rightCol'),
+            ], className="pretty_container seven columns"),
             html.Div([
                 html.H5("Monthly stats for spike"),
                 html.P("The stats are a trend for month. Select a rectangular region to drill down to week and day "),

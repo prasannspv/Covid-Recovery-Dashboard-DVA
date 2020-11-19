@@ -102,8 +102,7 @@ for country, country_code in WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2.items():
 
 
 def get_filtered_map():
-    return html.Div([
-        html.Div([
+    return  html.Div([
             html.Div([
                 html.H5("Select Country and Policy", className="control_label"),
                 html.P("Filter by Continent", className="control_label"),
@@ -140,8 +139,7 @@ def get_filtered_map():
                         className="pretty_container two columns")
                 ], className="row")
             ], className="pretty_container nine columns")
-        ], className="pretty_container row")
-    ])
+        ], className="row")
 
 
 def get_kpi_plots():
@@ -171,16 +169,6 @@ def get_kpi_plots():
                         "displaylogo": False,
                     }
                 )]),
-                html.Div(dcc.Slider(
-                    id="death-cases-slider",
-                    min=df['timestamp'].min(),
-                    max=df['timestamp'].max(),
-                    value=df['timestamp'].max(),
-                    marks={int(date): datetime.datetime.fromtimestamp(date).strftime('%m/%d') if i % 30 == 0 else "" for
-                           i, date in
-                           enumerate(df['timestamp'].unique())},
-                    step=None
-                ))
             ], className="pretty_container seven columns"),
             html.Div([
                 html.H5("Monthly stats for spike"),
@@ -252,7 +240,6 @@ app.layout = html.Div([
 def render_arima(country_code, strictness):
     country_code = a2toa3[country_code]
     filtered_arima = arima[arima["CC"] == country_code]
-    print(filtered_arima.head())
     x = filtered_arima['date']
     y = filtered_arima['new_cases_per_million']
     yl = filtered_arima[f'new_cases_per_million_{strictness}']
@@ -331,9 +318,10 @@ def kpi_plots(continent_code, country_code):
         "OC": None,
         "all": None
     }[continent_code]
+    inf_choropleth_recent_data = inf_policy
     fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code', color='positive_rate',
                         color_continuous_scale="ylgnbu", template='seaborn',
-                        range_color=[0, 0.2], scope=continent, projection='natural earth')
+                        range_color=[0, 0.2], scope=continent, projection='natural earth', animation_frame = 'date')
     if continent_code == "OC":
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]
@@ -345,10 +333,9 @@ def kpi_plots(continent_code, country_code):
 
 @app.callback(
     Output('new_deaths_per_million', 'figure'),
-    [Input('kpi-continent', 'value'), Input('kpi-country', 'value'), Input('death-cases-slider', 'value')]
+    [Input('kpi-continent', 'value'), Input('kpi-country', 'value')]
 )
-def kpi_plots_deaths(continent_code, country_code, date):
-    date = datetime.datetime.fromtimestamp(date).strftime('%Y-%m-%d')
+def kpi_plots_deaths(continent_code, country_code):
     continent = {
         "AF": "africa",
         "AS": "asia",
@@ -359,12 +346,12 @@ def kpi_plots_deaths(continent_code, country_code, date):
         "OC": None,
         "all": None
     }[continent_code]
-    date = min(date, max(inf_policy.date))
-    inf_choropleth_recent_data = inf_policy[inf_policy.date == date]
+    inf_choropleth_recent_data = inf_policy
     inf_choropleth_recent_data['new deaths/M'] = inf_choropleth_recent_data['new_deaths_per_million']
     fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code',
                         color='new deaths/M',
                         color_continuous_scale='matter',
+                        animation_frame = 'date',
                         template='seaborn', range_color=[0, 0.5], scope=continent,
                         projection='natural earth')
     if continent_code == "OC":
@@ -464,7 +451,7 @@ def update_graph(country_code, strictness):
 
 
 def create_time_series(dff, text):
-    fig = px.scatter(dff, x='date', y='new_cases')
+    fig = px.scatter(dff, x='date', y='new_cases', animation_frame = 'date')
     fig.update_traces(mode='lines+markers')
     fig.update_xaxes(showgrid=True)
     fig.update_yaxes(type='linear')

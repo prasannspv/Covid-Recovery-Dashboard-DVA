@@ -140,7 +140,7 @@ def get_filtered_map():
                         className="pretty_container two columns")
                 ], className="row")
             ], className="pretty_container nine columns")
-        ], className="pretty_container row", id='rightCol')
+        ], className="pretty_container row")
     ])
 
 
@@ -181,7 +181,7 @@ def get_kpi_plots():
                            enumerate(df['timestamp'].unique())},
                     step=None
                 ))
-            ], className="pretty_container seven columns", id='rightCol'),
+            ], className="pretty_container seven columns"),
             html.Div([
                 html.H5("Monthly stats for spike"),
                 html.P("The stats are a trend for month. Select a rectangular region to drill down to week and day "),
@@ -533,4 +533,4 @@ def update_tweets(country_code):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=7654)
+    app.run_server(debug=True)

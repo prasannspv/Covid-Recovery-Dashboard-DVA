@@ -530,3 +530,19 @@ h1, h6 {
   color: white; !important;
 }
 
+.plot-container {
+  border: 1px solid #00436b; !important;
+}
+
+#mainContainer {
+  font-weight: 400;
+  border: 0;
+}
+
+.dash-debug-menu {
+  display: none;
+}
+
+.pretty_container {
+  color: white; !important;
+}

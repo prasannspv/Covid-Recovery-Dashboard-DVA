@@ -77,7 +77,7 @@ def get_tweets_data():
 flights_data = pd.read_csv("dataset/merged-airlines.csv")
 flights_data['CC'] = flights_data['source_airport_country'].apply(lambda x: try_convert(x))
 latlon = pd.read_csv("dataset/latlon.csv", encoding='latin-1')
-inf_policy = pd.read_csv("dataset/infection_policy.csv")
+inf_policy = pd.read_csv("dataset/infection_policy.csv").sort_values('date')
 inf_choropleth_recent_data = inf_policy[inf_policy.date == '2020-10-06']
 a2toa3 = map_country_alpha2_to_country_alpha3()
 a3toa2 = map_country_alpha3_to_country_alpha2()
@@ -520,4 +520,4 @@ def update_tweets(country_code):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server()

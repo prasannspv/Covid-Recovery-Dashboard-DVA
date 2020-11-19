@@ -140,7 +140,7 @@ def get_filtered_map():
                         className="pretty_container two columns")
                 ], className="row")
             ], className="pretty_container nine columns")
-        ], className="pretty_container row", id='rightCol')
+        ], className="pretty_container row")
     ])
 
 
@@ -531,4 +531,4 @@ def update_tweets(country_code):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=7654)
+    app.run_server(debug=True)

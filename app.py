@@ -29,10 +29,10 @@ tab_style = {
 }
 
 tab_selected_style = {
-    # 'borderTop': '1px solid #d6d6d6',
     # 'borderBottom': '1px solid #d6d6d6',
+    # 'borderTop': '1px solid #d6d6d6',
     'backgroundColor': '#006296',
-    'color': 'black',
+    'color': 'white',
     'fontWeight': 'bold'
     # 'padding': '6px'
 }
@@ -150,12 +150,12 @@ def get_kpi_plots():
     return html.Div([
         html.Div([
             html.Div([
-                html.P("Select the Continent", className="control_label"),
-                get_filter_by_continent(id="kpi-continent")], className="six columns"),
+                html.P("Select the Continent", className="control_label", style={"color" : "white"}),
+                get_filter_by_continent(id="kpi-continent")], className="three columns"),
             html.Div([
-                html.P("Select the Country", className="control_label"),
-                get_filter_by_country(id="kpi-country")], className="six columns")
-        ], className="pretty_container row"),
+                html.P("Select the Country", className="control_label", style={"color" : "white"}),
+                get_filter_by_country(id="kpi-country")], className="three columns")
+        ], className="row"),
         html.Div([
             html.Div([
                 html.H5("New COVID-19 cases spread across the world"),
@@ -197,7 +197,7 @@ def get_kpi_plots():
                     "displaylogo": False,
                 })
             ], className="pretty_container five columns", id='rightCol')
-        ], className="row", ),
+        ], className="row"),
     ], id="mainContainer"
     )
 
@@ -232,16 +232,16 @@ def get_filter_by_continent(id=None):
 
 app.layout = html.Div([
     html.Div([
-        html.H1('COVID Recovery Dashboard'),
+        html.H1('😷   COVID Recovery Dashboard'),
         html.H6('Team 162 - DVA Nightwalkers')
     ], style={'textAlign': 'center'}),
     dcc.Tabs(id="tabs-styled-with-props", value='tab-1', children=[
         dcc.Tab(label='Key Performance Indicators', value='tab-1', style=tab_style, selected_style=tab_selected_style),
         dcc.Tab(label='Prediction Engine', value='tab-2', style=tab_style, selected_style=tab_selected_style),
     ], colors={
-        "border": "white",
-        "primary": "gold",
-        "background": "cornsilk"
+        "border": "#006296",
+        "primary": "#006296",
+        "background": "white"
     }),
     html.Div(id='tabs-conninet-props')
 ])
@@ -332,7 +332,8 @@ def kpi_plots(continent_code, country_code):
         "all": None
     }[continent_code]
     fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code', color='positive_rate',
-                        color_continuous_scale="ylgnbu", template='seaborn', range_color=[0, 0.2], scope=continent)
+                        color_continuous_scale="ylgnbu", template='seaborn',
+                        range_color=[0, 0.2], scope=continent, projection='natural earth')
     if continent_code == "OC":
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]
@@ -364,7 +365,8 @@ def kpi_plots_deaths(continent_code, country_code, date):
     fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code',
                         color='new deaths/M',
                         color_continuous_scale='matter',
-                        template='seaborn', range_color=[0, 0.5], scope=continent)
+                        template='seaborn', range_color=[0, 0.5], scope=continent,
+                        projection='natural earth')
     if continent_code == "OC":
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]

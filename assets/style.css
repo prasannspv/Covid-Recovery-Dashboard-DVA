@@ -544,5 +544,9 @@ h1, h6 {
 }
 
 .pretty_container {
-  color: white; !important;
+  background-color: white; !important;
+}
+
+.dash-debug-menu__outer  {
+  display: none !important;
 }

@@ -77,7 +77,7 @@ def get_tweets_data():
 flights_data = pd.read_csv("dataset/merged-airlines.csv")
 flights_data['CC'] = flights_data['source_airport_country'].apply(lambda x: try_convert(x))
 latlon = pd.read_csv("dataset/latlon.csv", encoding='latin-1')
-inf_policy = pd.read_csv("dataset/infection_policy.csv")
+inf_policy = pd.read_csv("dataset/infection_policy.csv").sort_values('date')
 inf_choropleth_recent_data = inf_policy[inf_policy.date == '2020-10-06']
 a2toa3 = map_country_alpha2_to_country_alpha3()
 a3toa2 = map_country_alpha3_to_country_alpha2()
@@ -102,8 +102,7 @@ for country, country_code in WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2.items():
 
 
 def get_filtered_map():
-    return html.Div([
-        html.Div([
+    return  html.Div([
             html.Div([
                 html.H5("Select Country and Policy", className="control_label"),
                 html.P("Filter by Continent", className="control_label"),
@@ -144,8 +143,7 @@ def get_filtered_map():
                         className="pretty_container two columns")
                 ], className="row")
             ], className="pretty_container nine columns")
-        ], className="pretty_container row")
-    ])
+        ], className="row")
 
 
 def get_kpi_plots():
@@ -175,16 +173,6 @@ def get_kpi_plots():
                         "displaylogo": False,
                     }
                 )]),
-                html.Div(dcc.Slider(
-                    id="death-cases-slider",
-                    min=df['timestamp'].min(),
-                    max=df['timestamp'].max(),
-                    value=df['timestamp'].max(),
-                    marks={int(date): datetime.datetime.fromtimestamp(date).strftime('%m/%d') if i % 30 == 0 else "" for
-                           i, date in
-                           enumerate(df['timestamp'].unique())},
-                    step=None
-                ))
             ], className="pretty_container seven columns"),
             html.Div([
                 html.H5("Statistics"),
@@ -258,7 +246,6 @@ app.layout = html.Div([
 def render_arima(country_code, strictness):
     country_code = a2toa3[country_code]
     filtered_arima = arima[arima["CC"] == country_code]
-    print(filtered_arima.head())
     x = filtered_arima['date']
     y = filtered_arima['new_cases_per_million']
     yl = filtered_arima[f'new_cases_per_million_{strictness}']
@@ -337,13 +324,15 @@ def kpi_plots(continent_code, country_code):
         "OC": None,
         "all": None
     }[continent_code]
+    inf_choropleth_recent_data = inf_policy
     fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code', color='positive_rate',
                         color_continuous_scale="ylgnbu", template='seaborn',
-                        range_color=[0, 0.2], scope=continent, projection='natural earth')
+                        range_color=[0, 0.2], scope=continent, projection='natural earth', animation_frame = 'date')
     if continent_code == "OC":
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]
         )
+    fig.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = 5
     fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
     return fig
@@ -351,10 +340,9 @@ def kpi_plots(continent_code, country_code):
 
 @app.callback(
     Output('new_deaths_per_million', 'figure'),
-    [Input('kpi-continent', 'value'), Input('kpi-country', 'value'), Input('death-cases-slider', 'value')]
+    [Input('kpi-continent', 'value'), Input('kpi-country', 'value')]
 )
-def kpi_plots_deaths(continent_code, country_code, date):
-    date = datetime.datetime.fromtimestamp(date).strftime('%Y-%m-%d')
+def kpi_plots_deaths(continent_code, country_code):
     continent = {
         "AF": "africa",
         "AS": "asia",
@@ -365,18 +353,19 @@ def kpi_plots_deaths(continent_code, country_code, date):
         "OC": None,
         "all": None
     }[continent_code]
-    date = min(date, max(inf_policy.date))
-    inf_choropleth_recent_data = inf_policy[inf_policy.date == date]
+    inf_choropleth_recent_data = inf_policy
     inf_choropleth_recent_data['new deaths/M'] = inf_choropleth_recent_data['new_deaths_per_million']
     fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code',
                         color='new deaths/M',
                         color_continuous_scale='matter',
+                        animation_frame = 'date',
                         template='seaborn', range_color=[0, 0.5], scope=continent,
                         projection='natural earth')
     if continent_code == "OC":
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]
         )
+    fig.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = 5
     fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
     return fig
 
@@ -539,4 +528,4 @@ def update_tweets(country_code):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server()

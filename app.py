@@ -102,48 +102,49 @@ for country, country_code in WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2.items():
 
 
 def get_filtered_map():
-    return  html.Div([
+    return html.Div([
+        html.Div([
+            html.H5("Select Country and Policy", className="control_label"),
+            html.P("Filter by Continent", className="control_label"),
+            get_filter_by_continent(),
+            html.P("Select the Country", className="control_label"),
+            get_filter_by_country(),
+            html.P("Select Strictness Level of Policy", className="control_label"),
+            dcc.RadioItems(
+                id='strictness',
+                options=[
+                    {'label': 'Lowest Level', 'value': 'low'},
+                    {'label': 'Highest Level', 'value': 'high'}
+                ],
+                value='low',
+                className="dcc_control"
+            ),
+            html.Span("Policy Selected:", className="control_label"),
+            html.Span("Moderate", id="policy_selected", className="control_label"),
+            html.P(),
+            html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'})
+        ], className="pretty_container three columns"),
+        html.Div([
+            html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
+            html.P(),
+            dcc.Loading(id="loading-1",
+                        children=[dcc.Graph(
+                            id='world_map', config={
+                                "displaylogo": False,
+                            }
+                        )], type="default"),
             html.Div([
-                html.H5("Select Country and Policy", className="control_label"),
-                html.P("Filter by Continent", className="control_label"),
-                get_filter_by_continent(),
-                html.P("Select the Country", className="control_label"),
-                get_filter_by_country(),
-                html.P("Select Strictness Level of Policy", className="control_label"),
-                dcc.RadioItems(
-                    id='strictness',
-                    options=[
-                        {'label': 'Lowest Level', 'value': 'low'},
-                        {'label': 'Highest Level', 'value': 'high'}
-                    ],
-                    value='low',
-                    className="dcc_control"
-                ),
-                html.Span("Policy Selected:", className="control_label"),
-                html.Span("Moderate", id="policy_selected", className="control_label"),
-                html.P(),
-                html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'})
-            ], className="pretty_container three columns"),
-            html.Div([
-                html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
-                html.P(),
-                dcc.Graph(
-                    id='world_map', config={
-                        "displaylogo": False,
-                    }
-                ),
                 html.Div([
-                    html.Div([
-                        dcc.Graph(id="arima", config={
-                            "displaylogo": False,
-                        })
-                    ], className="ten columns"),
-                    html.Div(
-                        dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"),
-                        className="pretty_container two columns")
-                ], className="row")
-            ], className="pretty_container nine columns")
-        ], className="row")
+                    dcc.Graph(id="arima", config={
+                        "displaylogo": False,
+                    })
+                ], className="ten columns"),
+                html.Div(
+                    dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"),
+                    className="pretty_container two columns")
+            ], className="row")
+        ], className="pretty_container nine columns")
+    ], className="row")
 
 
 def get_kpi_plots():
@@ -161,22 +162,24 @@ def get_kpi_plots():
         html.Div([
             html.Div([
                 html.H5("New COVID-19 cases spread across the world"),
-                html.Div([dcc.Graph(
-                    id='new_cases', config={
-                        "displaylogo": False,
-                    }
-                )]),
+                dcc.Loading(id="loading-1",
+                            children=[html.Div([dcc.Graph(
+                                id='new_cases', config={
+                                    "displaylogo": False,
+                                }
+                            )])], type="default"),
                 html.P(),
                 html.H5("New COVID-19 deaths spread across the world"),
-                html.Div([dcc.Graph(
-                    id='new_deaths_per_million', config={
-                        "displaylogo": False,
-                    }
-                )]),
+                dcc.Loading(id="loading-icon",
+                            children=[html.Div([dcc.Graph(
+                                id='new_deaths_per_million', config={
+                                    "displaylogo": False,
+                                }
+                            )])], type="default"),
             ], className="pretty_container seven columns"),
             html.Div([
                 html.H5("Statistics"),
-                html.P("New Cases"),
+                html.H5("New Cases"),
                 dcc.Graph(id='x-time-series-new-cases', config={
                     "displaylogo": False,
                 }),
@@ -309,6 +312,12 @@ def kpi_continent_filer_options(continent):
         return options
 
 
+@app.callback(Output("loading-1", "children"))
+def input_triggers_spinner():
+    time.sleep(1)
+    return None
+
+
 @app.callback(
     Output('new_cases', 'figure'),
     [Input('kpi-continent', 'value'), Input('kpi-country', 'value')]
@@ -327,7 +336,7 @@ def kpi_plots(continent_code, country_code):
     inf_choropleth_recent_data = inf_policy
     fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code', color='positive_rate',
                         color_continuous_scale="ylgnbu", template='seaborn',
-                        range_color=[0, 0.2], scope=continent, projection='natural earth', animation_frame = 'date')
+                        range_color=[0, 0.2], scope=continent, projection='natural earth', animation_frame='date')
     if continent_code == "OC":
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]
@@ -358,7 +367,7 @@ def kpi_plots_deaths(continent_code, country_code):
     fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code',
                         color='new deaths/M',
                         color_continuous_scale='matter',
-                        animation_frame = 'date',
+                        animation_frame='date',
                         template='seaborn', range_color=[0, 0.5], scope=continent,
                         projection='natural earth')
     if continent_code == "OC":
@@ -432,28 +441,31 @@ def update_graph(country_code, strictness):
     dest_lat = latlon.loc[latlon['name'] == country]['latitude'].iloc[0]
     dest_lon = latlon.loc[latlon['name'] == country]['longitude'].iloc[0]
     dest_flights = flights_data[flights_data['dest_airport_country'] == country]
-    fig = px.choropleth(dest_flights, locationmode="ISO-3", locations='CC', color='flight_capacity',
-                        color_continuous_scale="spectral", template='seaborn', projection='natural earth')
-    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+    if dest_flights.size[0] == 0:
+        fig = px.choropleth(scope=None)
+    else:
+        fig = px.choropleth(dest_flights, locationmode="ISO-3", locations='CC', color='flight_capacity',
+                            color_continuous_scale="spectral", template='seaborn', projection='natural earth')
+        fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
-    country_3 = a2toa3[country_code]
-    country_cr = risk_factors[risk_factors['iso_code'] == country_3]
-    for val in dest_flights.itertuples():
-        source = val[1]
-        if strictness == 'low' and not country_name_to_country_alpha3(source) in country_cr['sources_y'].iloc[0]:
-            continue
-        try:
-            lat = latlon.loc[latlon['name'] == source]['latitude'].iloc[0]
-            lon = latlon.loc[latlon['name'] == source]['longitude'].iloc[0]
-            fig = fig.add_scattergeo(lat=[lat, dest_lat], lon=[lon, dest_lon], line=dict(width=1, color='#1F1F1F'),
-                                     mode='lines+text', text="✈️", showlegend=False)
-        except:
-            continue
-    strictness_level = {
-        'low': "Lowest",
-        'med': "Moderate",
-        'high': "Highest"
-    }[strictness]
+        country_3 = a2toa3[country_code]
+        country_cr = risk_factors[risk_factors['iso_code'] == country_3]
+        for val in dest_flights.itertuples():
+            source = val[1]
+            if strictness == 'low' and not country_name_to_country_alpha3(source) in country_cr['sources_y'].iloc[0]:
+                continue
+            try:
+                lat = latlon.loc[latlon['name'] == source]['latitude'].iloc[0]
+                lon = latlon.loc[latlon['name'] == source]['longitude'].iloc[0]
+                fig = fig.add_scattergeo(lat=[lat, dest_lat], lon=[lon, dest_lon], line=dict(width=1, color='#1F1F1F'),
+                                         mode='lines+text', text="✈️", showlegend=False)
+            except:
+                continue
+        strictness_level = {
+            'low': "Lowest",
+            'med': "Moderate",
+            'high': "Highest"
+        }[strictness]
 
     return fig, dcc.Markdown(text.format(country, strictness_level))
 
@@ -528,4 +540,4 @@ def update_tweets(country_code):
 
 
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(debug=True)

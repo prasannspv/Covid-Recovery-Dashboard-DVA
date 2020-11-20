@@ -78,7 +78,8 @@ flights_data = pd.read_csv("dataset/merged-airlines.csv")
 flights_data['CC'] = flights_data['source_airport_country'].apply(lambda x: try_convert(x))
 latlon = pd.read_csv("dataset/latlon.csv", encoding='latin-1')
 inf_policy = pd.read_csv("dataset/infection_policy.csv").sort_values('date')
-inf_choropleth_recent_data = inf_policy[inf_policy.date == '2020-10-06']
+lim_date = '2020-11-16'
+inf_choropleth_recent_data = inf_policy[inf_policy.date == ('%s' % lim_date)]
 a2toa3 = map_country_alpha2_to_country_alpha3()
 a3toa2 = map_country_alpha3_to_country_alpha2()
 arima = pd.read_csv("dataset/prediction.csv")
@@ -240,9 +241,14 @@ app.layout = html.Div([
 def render_arima(country_code, strictness):
     country_code = a2toa3[country_code]
     filtered_arima = arima[arima["CC"] == country_code]
+    lim_df = filtered_arima[filtered_arima['date'] < lim_date]
     x = filtered_arima['date']
     y = filtered_arima['new_cases_per_million']
-    yl = filtered_arima[f'new_cases_per_million_{strictness}']
+    xd = lim_df['date']
+    yd = lim_df['new_cases_per_million']
+    val = "high" if strictness == 'low' else 'low'
+    yl = filtered_arima[f'new_cases_per_million_{val}']
+    ydl = lim_df[f'new_cases_per_million_{val}']
     fig = go.Figure([
         go.Scatter(
             name='Adjusted New Cases Per Million',
@@ -252,11 +258,25 @@ def render_arima(country_code, strictness):
             mode='lines',
         ),
         go.Scatter(
+            name = 'Adjusted New Cases Per Million',
+            x = xd,
+            y = ydl,
+            line = dict(color = '#FFA500', dash= 'dash'),
+            mode = 'lines',
+        ),
+        go.Scatter(
             name='New Cases Per Million',
             x=x,
             y=y,
             mode='lines',
             line=dict(color='red'),
+        ),
+        go.Scatter(
+            name = 'New Cases Per Million',
+            x = xd,
+            y = yd,
+            mode = 'lines',
+            line = dict(color = 'red', dash= 'dash'),
         )
     ])
     return fig

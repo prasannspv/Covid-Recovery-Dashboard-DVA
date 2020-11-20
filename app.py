@@ -326,6 +326,7 @@ def kpi_plots(continent_code, country_code):
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]
         )
+    fig.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = 5
     fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
     return fig
@@ -358,6 +359,7 @@ def kpi_plots_deaths(continent_code, country_code):
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]
         )
+    fig.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = 5
     fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
     return fig
 

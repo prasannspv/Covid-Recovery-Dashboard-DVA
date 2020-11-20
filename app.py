@@ -77,7 +77,7 @@ def get_tweets_data():
 flights_data = pd.read_csv("dataset/merged-airlines.csv")
 flights_data['CC'] = flights_data['source_airport_country'].apply(lambda x: try_convert(x))
 latlon = pd.read_csv("dataset/latlon.csv", encoding='latin-1')
-inf_policy = pd.read_csv("dataset/infection_policy.csv").sort_values('date')
+inf_policy = pd.read_csv("dataset/owid-covid-data.csv").sort_values('date')
 lim_date = '2020-11-16'
 inf_choropleth_recent_data = inf_policy[inf_policy.date == ('%s' % lim_date)]
 a2toa3 = map_country_alpha2_to_country_alpha3()
@@ -128,6 +128,7 @@ def get_filtered_map():
         html.Div([
             html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
             html.P(),
+            html.Button('View Positive Rate', id='submit-val', n_clicks=0),
             dcc.Loading(id="loading-1",
                         children=[dcc.Graph(
                             id='world_map', config={
@@ -261,33 +262,34 @@ def render_arima(country_code, strictness):
     fig = go.Figure([
         go.Scatter(
             name='Adjusted New Cases Per Million',
-            x=x,
-            y=yl,
-            line=dict(color='#FFA500'),
+            x=xd,
+            y=ydl,
+            line=dict(color='blue'),
             mode='lines',
         ),
         go.Scatter(
             name = 'Adjusted New Cases Per Million',
-            x = xd,
-            y = ydl,
-            line = dict(color = '#FFA500', dash= 'dash'),
+            x = x,
+            y = yl,
+            line = dict(color = 'blue', dash= 'dash'),
             mode = 'lines',
         ),
         go.Scatter(
             name='New Cases Per Million',
-            x=x,
-            y=y,
+            x=xd,
+            y=yd,
             mode='lines',
             line=dict(color='red'),
         ),
         go.Scatter(
             name = 'New Cases Per Million',
-            x = xd,
-            y = yd,
+            x = x,
+            y = y,
             mode = 'lines',
             line = dict(color = 'red', dash= 'dash'),
         )
     ])
+    fig.update_xaxes(rangeslider_visible = True)
     return fig
 
 
@@ -405,28 +407,16 @@ def kpi_plots_deaths(continent_code, country_code):
 def policy_indicator(strictness):
     policy = {
         "low": [
-            {'label': 'Public Transport', 'value': 'yes'},
-            {'label': 'Internal Movements', 'value': 'yes'},
-            {'label': 'Schools', 'value': 'yes'},
-            {'label': 'Public Events', 'value': 'yes'},
-            {'label': 'Workplaces', 'value': 'yes'},
-            {'label': 'Stay at Home', 'value': 'yes'}
-        ],
-        "med": [
-            {'label': 'Public Transport', 'value': 'no'},
-            {'label': 'Internal Movements', 'value': 'yes'},
-            {'label': 'Schools', 'value': 'no'},
-            {'label': 'Public Events', 'value': 'no'},
-            {'label': 'Workplaces', 'value': 'yes'},
-            {'label': 'Stay at Home', 'value': 'yes'}
+            {'label': 'International Travel', 'value': 'yes'},
+            {'label': 'Revert Stay At Home Order', 'value': 'yes'},
+            {'label': 'Grocery Stores - No timings', 'value': 'yes'},
+            {'label': 'Pharmacies - Open All', 'value': 'yes'}
         ],
         "high": [
-            {'label': 'Public Transport', 'value': 'no'},
-            {'label': 'Internal Movements', 'value': 'no'},
-            {'label': 'Schools', 'value': 'no'},
-            {'label': 'Public Events', 'value': 'no'},
-            {'label': 'Workplaces', 'value': 'no'},
-            {'label': 'Stay at Home', 'value': 'no'}
+            {'label': 'International Travel', 'value': 'rest'},
+            {'label': 'Revert Stay At Home Order', 'value': 'no'},
+            {'label': 'Grocery Stores - No timings', 'value': 'no'},
+            {'label': 'Pharmacies - Open All', 'value': 'no'}
         ]
     }
     restrictions = policy[strictness]
@@ -435,7 +425,7 @@ def policy_indicator(strictness):
         elements.append(html.P())
         value = restriction['value']
         label = restriction['label']
-        resp = "✔️" if value == "yes" else "❌"
+        resp = "✔️" if value == "yes" else "❌" if value == "no" else "⚠️"
         elements.append(html.Span(resp, className=f"{value}"))
         elements.append(html.Span(f" {label}"))
 
@@ -454,25 +444,33 @@ def policy_indicator(strictness):
 
 
 @app.callback(
-    [Output('world_map', 'figure'), Output('text', 'children')],
-    [Input('country-selector', 'value'), Input('strictness', 'value')])
-def update_graph(country_code, strictness):
+    [Output('world_map', 'figure'), Output('text', 'children'), Output('submit-val', 'children')],
+    [Input('country-selector', 'value'), Input('strictness', 'value'), Input('submit-val', 'n_clicks')])
+def update_graph(country_code, strictness, clicks):
     country = country_alpha2_to_country_name(country_code)
     dest_lat = latlon.loc[latlon['name'] == country]['latitude'].iloc[0]
     dest_lon = latlon.loc[latlon['name'] == country]['longitude'].iloc[0]
     dest_flights = flights_data[flights_data['dest_airport_country'] == country]
-    if dest_flights.size[0] == 0:
-        fig = px.choropleth(scope=None)
+    if dest_flights.size == 0:
+        fig = px.scatter_geo(lat=[dest_lat], lon=[dest_lon], projection='natural earth')
+        markdown = dcc.Markdown("#### NO DATA AVAILABLE FOR THE SELECTED COUNTRY")
+        fig.update_layout(margin = dict(l = 0, r = 0, t = 0, b = 0))
     else:
-        fig = px.choropleth(dest_flights, locationmode="ISO-3", locations='CC', color='flight_capacity',
-                            color_continuous_scale="spectral", template='seaborn', projection='natural earth')
+        if clicks % 2 == 0:
+            fig = px.choropleth(dest_flights, locationmode="ISO-3", locations='CC', color='flight_capacity',
+                                color_continuous_scale="spectral", template='seaborn', projection='natural earth')
+            label = "View Positive Rate"
+        else:
+            fig = px.choropleth(inf_choropleth_recent_data, locationmode = "ISO-3", locations = 'iso_code', color = 'positive_rate', color_continuous_scale = "reds", template = 'seaborn', projection = 'natural earth')
+            label = "View Flight Capacity"
+
         fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
         country_3 = a2toa3[country_code]
         country_cr = risk_factors[risk_factors['iso_code'] == country_3]
         for val in dest_flights.itertuples():
             source = val[1]
-            if strictness == 'low' and not country_name_to_country_alpha3(source) in country_cr['sources_y'].iloc[0]:
+            if strictness == 'high' and not country_name_to_country_alpha3(source) in country_cr['sources_y'].iloc[0]:
                 continue
             try:
                 lat = latlon.loc[latlon['name'] == source]['latitude'].iloc[0]
@@ -487,7 +485,8 @@ def update_graph(country_code, strictness):
             'high': "Highest"
         }[strictness]
 
-    return fig, dcc.Markdown(text.format(country, strictness_level))
+        markdown = dcc.Markdown(text.format(country, strictness_level))
+    return fig, markdown, label
 
 
 def create_time_series(dff, text):
@@ -560,4 +559,4 @@ def update_tweets(country_code):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server()

@@ -63,8 +63,8 @@ def get_infection_policy():
         return time.mktime(datetime.datetime.strptime(value, "%Y-%m-%d").timetuple())
 
     inf_policy_df['Country Name'] = inf_policy_df.iso_code
-    inf_policy_df['New Cases'] = inf_policy_df.new_cases
-    inf_policy_df['New Deaths'] = inf_policy_df.new_deaths
+    inf_policy_df['New Cases'] = inf_policy_df.new_cases_smoothed
+    inf_policy_df['New Deaths'] = inf_policy_df.new_deaths_smoothed
     inf_policy_df['timestamp'] = inf_policy_df.date.apply(lambda x: to_timestamp(x))
     return inf_policy_df
 
@@ -129,11 +129,15 @@ def get_filtered_map():
                 html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
                 html.P(),
                 dcc.Graph(
-                    id='world_map'
+                    id='world_map', config={
+                        "displaylogo": False,
+                    }
                 ),
                 html.Div([
                     html.Div([
-                        dcc.Graph(id="arima")
+                        dcc.Graph(id="arima", config={
+                            "displaylogo": False,
+                        })
                     ], className="ten columns"),
                     html.Div(
                         dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"),
@@ -150,10 +154,10 @@ def get_kpi_plots():
     return html.Div([
         html.Div([
             html.Div([
-                html.P("Select the Continent", className="control_label", style={"color" : "white"}),
+                html.P("Select the Continent", className="control_label", style={"color": "white"}),
                 get_filter_by_continent(id="kpi-continent")], className="three columns"),
             html.Div([
-                html.P("Select the Country", className="control_label", style={"color" : "white"}),
+                html.P("Select the Country", className="control_label", style={"color": "white"}),
                 get_filter_by_country(id="kpi-country")], className="three columns")
         ], className="row"),
         html.Div([
@@ -183,16 +187,18 @@ def get_kpi_plots():
                 ))
             ], className="pretty_container seven columns"),
             html.Div([
-                html.H5("Monthly stats for spike"),
-                html.P("The stats are a trend for month. Select a rectangular region to drill down to week and day "),
+                html.H5("Statistics"),
+                html.P("New Cases"),
                 dcc.Graph(id='x-time-series-new-cases', config={
                     "displaylogo": False,
                 }),
                 html.Hr(),
+                html.H5("New Deaths"),
                 dcc.Graph(id='x-time-series-new-deaths', config={
                     "displaylogo": False,
                 }),
                 html.Hr(),
+                html.H5("Sentiment polarity of tweets"),
                 dcc.Graph(id='sentiment-tweets', config={
                     "displaylogo": False,
                 })
@@ -232,7 +238,7 @@ def get_filter_by_continent(id=None):
 
 app.layout = html.Div([
     html.Div([
-        html.H1('😷   COVID Recovery Dashboard'),
+        html.H1('😷   COVID-19 Recovery Dashboard'),
         html.H6('Team 162 - DVA Nightwalkers')
     ], style={'textAlign': 'center'}),
     dcc.Tabs(id="tabs-styled-with-props", value='tab-1', children=[

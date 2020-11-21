@@ -34,8 +34,7 @@ Download https://covid.ourworldindata.org/data/owid-covid-data.csv as owid-covid
 ### Temeperature: 
 Register an account at https://data.world/data-society/global-climate-change-data. Download "GlobalLandTemperaturesByCountry.csv".
 ### Tweets:
-
-
+Register an account and download all csvs at https://ieee-dataport.org/open-access/coronavirus-covid-19-tweets-dataset
 ### Flights:
 
 

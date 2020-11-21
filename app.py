@@ -24,6 +24,7 @@ tabs_styles = {
 }
 tab_style = {
     'borderBottom': '1px solid #d6d6d6',
+    "font-size": "17px"
     # 'padding': '6px',
     # 'fontWeight': 'bold'
 }
@@ -33,7 +34,8 @@ tab_selected_style = {
     # 'borderTop': '1px solid #d6d6d6',
     'backgroundColor': '#006296',
     'color': 'white',
-    'fontWeight': 'bold'
+    'fontWeight': 'bold',
+    "font-size": "17px"
     # 'padding': '6px'
 }
 

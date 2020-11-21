@@ -43,6 +43,9 @@ Register an account and download all csvs at https://ieee-dataport.org/open-acce
 The above dataset are downloaded and placed into the dataset folder.
 
 ## Execution 
+#### Executing the algorithm
+1. Download the relevant dataset in the data collection section.
+2. Run code/main.py
 
 #### Bringing up the dashboard is a simple two-step process:
 1. Install all the required packages:

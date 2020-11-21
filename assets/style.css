@@ -569,3 +569,21 @@ h1, h6 {
 .blue {
   color: blue;
 }
+
+.last-banner {
+  text-decoration: InactiveCaptionText;
+  text-align: end;
+}
+
+.sub-section-header {
+  text-align: center;
+  font-style: italic;
+  font-size: 1.3rem;
+  padding-top: 10px;
+}
+
+.main-header {
+  text-align: left;
+  font-style: italic;
+  font-size: 1.8rem;
+}

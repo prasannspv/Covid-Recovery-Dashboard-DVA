@@ -146,7 +146,9 @@ def get_filtered_map():
                     id='metrics',
                     className="pretty_container two columns")
             ], className="row")
-        ], className="pretty_container nine columns")
+        ], className="pretty_container nine columns"),
+        html.Hr(),
+        html.Div("Last Updated At: 20/11/2020", className="last-banner")
     ], className="row")
 
 
@@ -164,38 +166,40 @@ def get_kpi_plots():
         ], className="row"),
         html.Div([
             html.Div([
-                html.H5("New COVID-19 cases spread across the world"),
+                html.H5("New COVID-19 cases spread across the world", className="main-header"),
                 dcc.Loading(id="loading-1",
                             children=[html.Div([dcc.Graph(
                                 id='new_cases', config={
                                     "displaylogo": False,
                                 }
                             )])], type="default"),
-                html.P(),
-                html.H5("New COVID-19 deaths spread across the world"),
+                html.Hr(),
+                html.H5("New COVID-19 deaths spread across the world", className="main-header"),
                 dcc.Loading(id="loading-icon",
                             children=[html.Div([dcc.Graph(
                                 id='new_deaths_per_million', config={
                                     "displaylogo": False,
                                 }
                             )])], type="default"),
+                html.Hr(),
+                html.Div("Last Updated At: 20/11/2020", className="last-banner"),
             ], className="pretty_container seven columns"),
             html.Div([
-                html.H5("Statistics"),
-                html.H5("New Cases"),
+                html.H5("Statistics trend per country", className="main-header"),
+                html.P("New Cases", className="sub-section-header"),
                 dcc.Graph(id='x-time-series-new-cases', config={
                     "displaylogo": False,
                 }),
-                html.Hr(),
-                html.H5("New Deaths"),
+                html.P("New Deaths", className="sub-section-header"),
                 dcc.Graph(id='x-time-series-new-deaths', config={
                     "displaylogo": False,
                 }),
-                html.Hr(),
-                html.H5("Sentiment polarity of tweets"),
+                html.P("Sentiment polarity of tweets", className="sub-section-header"),
                 dcc.Graph(id='sentiment-tweets', config={
                     "displaylogo": False,
-                })
+                }),
+                html.Hr(),
+                html.Div("Last Updated At: 20/11/2020", className="last-banner"),
             ], className="pretty_container five columns", id='rightCol')
         ], className="row"),
     ], id="mainContainer"
@@ -234,7 +238,7 @@ app.layout = html.Div([
     html.Div([
         html.H1('😷   COVID-19 Recovery Dashboard'),
         html.H6('Team 162 - DVA Nightwalkers ✰ Final Project ✰ CSE 6242 ✰ Fall 2020'),
-        html.A(html.Button('Refresh ↺', className='refresh row'), href='/'),
+        html.A(html.Button('Reset zoom and applied filters ↺', className='refresh row'), href='/'),
         html.P(),
     ], style={'textAlign': 'center'}),
     dcc.Tabs(id="tabs-styled-with-props", value='tab-1', children=[

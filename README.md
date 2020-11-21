@@ -18,42 +18,34 @@ The dashboard has two sections:
 
 
 
-## Installation
 
-### Software for the dashboard
-
-### Code
-Python version 3.8.0
-Libraries to install: pandas, numpy, sklearn, statsmodels, datetime, inspect, dash
-
-
-## Data Collection
-All dataset are directly called within the python script except the following:
+### Data
+All the datasets required for visualization are present in the `datasets` folder
 ### Covid19 Cases:
 Download https://covid.ourworldindata.org/data/owid-covid-data.csv as owid-covid-data.csv
 ### Temeperature: 
 Register an account at https://data.world/data-society/global-climate-change-data. Download "GlobalLandTemperaturesByCountry.csv".
 ### Tweets:
 Register an account and download all csvs at https://ieee-dataport.org/open-access/coronavirus-covid-19-tweets-dataset
-### Flights:
 
 
 
 
 The above dataset are downloaded and placed into the dataset folder.
 
-## Execution 
-#### Executing the algorithm
-1. Download the relevant dataset in the data collection section.
-2. Run code/main.py
-
+## Installation and Execution 
 #### Bringing up the dashboard is a simple two-step process:
 1. Install all the required packages:
 `pip install -r requirements.txt`
 2. Execute the dash app
 `python app.py`
 
-#### The following data collection/analysis scripts need not be executed to view the final results. Added them here just for reference.
+#### Data Extraction and Transformation
+
+The following data collection/analysis scripts need not be executed to view the final results. Added them here just for reference.
+
+Please navigate to `code` folder to execute the following scripts
+
 ##### Infection/Policy Data
 **main.py:** To run the random forest feature selection and exponential smoothing. 
 

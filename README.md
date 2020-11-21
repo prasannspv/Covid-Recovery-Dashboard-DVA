@@ -36,6 +36,12 @@ Download https://covid.ourworldindata.org/data/owid-covid-data.csv as owid-covid
 Register an account at https://data.world/data-society/global-climate-change-data. Download "GlobalLandTemperaturesByCountry.csv".
 ### Tweets:
 
+
+### Flights:
+
+
+
+
 The above dataset are downloaded and placed into the dataset folder.
 
 ## Installation Guide

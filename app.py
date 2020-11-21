@@ -38,7 +38,7 @@ tab_selected_style = {
 }
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-app.title = 'COVID Recovery Dashboard'
+app.title = 'COVID-19 Recovery Dashboard'
 app.config['suppress_callback_exceptions'] = True
 server = app.server
 text = "For **{0}**, map shows the countries with which it should open its " \
@@ -606,7 +606,7 @@ def create_tweets(dff, text):
 def update_tweets(country_code):
     df = get_tweets_data()
     dff = df[df['Country'] == country_code]
-    return create_tweets(dff, f"Tweets on {country_code}")
+    return create_tweets(dff, f"Tweets on {a2toa3[country_code]}")
 
 
 if __name__ == '__main__':

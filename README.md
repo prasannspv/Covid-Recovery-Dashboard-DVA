@@ -40,6 +40,9 @@ The above dataset are downloaded and placed into the dataset folder.
 
 ## Installation Guide
 Step 1: Install the necessary packages under the package section
+
 Step 2: Download the data listed under data collection to the "dataset" folder
+
 Step 3: Run code/main.py to generate dataset/prediction.csv 
+
 Step 4:

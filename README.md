@@ -56,27 +56,41 @@ The above dataset are downloaded and placed into the dataset folder.
 #### The following data collection/analysis scripts need not be executed to view the final results. Added them here just for reference.
 ##### Infection/Policy Data
 **main.py:** To run the random forest feature selection and exponential smoothing. 
+
 Inputs: dataset/GlobalLandTemperaturesByCountry.csv and dataset/final_op_sentiments_daily.csv
+
 Outputs: dataset/prediction.csv and dataset/output_coefficients
+
 **load_data.py:** Called in main.py to load necessary dataset
+
 **rf.py:** Called in main.py to run the random forest algorithm
+
 **es.py:** Called in main.py to run exponential smoothing
 
 ##### Flight Data
 **flights_data_cleaning.R:** for data cleaning and munging
+
 **flights_aggregation_for_viz.ipynb:** For aggregation of results
+
 Input: dataset/flights_with_capacity.ipynb
+
 Output: dataset/merged_airlines.csv
+
 **Risk Factor.ipynb:**: For risk factor computation
+
 Input: dataset/merged_airlines.csv
+
 Output: dataset/risk_factor.csv
 
 ##### Tweets
 **twitter_covid_ds.py:** The purpose of this is to annotate individual tweets with the country of origin.
-Input: Download all the csvs from https://ieee-dataport.org/open-access/coronavirus-covid-19-tweets-dataset
-And place it in a folder. Please provide the folder path in line 13 and run the program
+
+Input: Download all the csvs from https://ieee-dataport.org/open-access/coronavirus-covid-19-tweets-dataset and place it in a folder. Please provide the folder path in line 13 and run the program
+
 Output: tweets1.csv 
 
 **DVA Sentiment Analysis.ipynb:** The purpose of this is aggregate the data and compute the statistics of tweets
+
 Input: tweets1.csv obtained from previous script
+
 Output: final_op_sentiments_daily.csv/ final_op_sentiments_weekly.csv

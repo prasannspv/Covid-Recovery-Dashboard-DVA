@@ -38,7 +38,7 @@ tab_selected_style = {
 }
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-app.title = 'COVID Recovery Dashboard'
+app.title = 'COVID-19 Recovery Dashboard'
 app.config['suppress_callback_exceptions'] = True
 server = app.server
 text = "For **{0}**, map shows the countries with which it should open its " \
@@ -143,7 +143,7 @@ def get_filtered_map():
                     })
                 ], className="pretty_container ten columns"),
                 html.Div(
-                    dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"),
+                    id='metrics',
                     className="pretty_container two columns")
             ], className="row")
         ], className="pretty_container nine columns")
@@ -305,6 +305,51 @@ def render_conninet(tab):
     elif tab == 'tab-2':
         return get_filtered_map()
 
+@app.callback(Output('metrics', 'children'),
+              [Input('country-selector', 'value'), Input('strictness', 'value')])
+def continent_filer_options(country, strictness):
+    cont = None
+    country_ = a2toa3[country]
+
+    if strictness == 'high':
+        fl_df = risk_factors[risk_factors['iso_code'] == country_]
+        countries = fl_df.sources_y.iloc[0]
+        countries = html.Ul([html.Li(country_alpha2_to_country_name(a3toa2[x])) for x in countries.split(';')])
+        cont = html.Div([
+            dcc.Markdown("Air corridor can be opened to the following countries"),
+            countries
+        ])
+    else:
+        cont = dcc.Markdown("Air corridor opened to all the countries")
+    cont_df = arima[arima.location == country_alpha2_to_country_name(country)]
+    date_ = cont_df[cont_df.date == max(cont_df.date)]
+    act = date_['new_cases_per_million']
+    if date_.size == 0:
+        act = pred = "NA"
+    elif strictness == 'high':
+        act = int(act.iloc[0])
+        pred = int(date_['new_cases_per_million_low'].iloc[0])
+    else:
+        act = int(act.iloc[0])
+        pred = int(date_['new_cases_per_million_high'].iloc[0])
+
+    warn_div = None
+    if date_.size > 0 and pred > act:
+        pct_ch = round((pred - act)/act, 2)
+        if pct_ch > 0.1:
+            warn_div = dcc.Markdown("10% of surge in cases detected! This policy is not recommended.",
+                                    className = "red")
+
+    content = html.Div([
+        dcc.Markdown("Expected New Cases Per Million"),
+        dcc.Markdown(f"### {act}", className = "red"),
+        dcc.Markdown("Adjusted New Cases Per Million"),
+        dcc.Markdown(f"### {pred}", className = "blue"),
+        warn_div,
+        cont
+    ])
+
+    return content
 
 @app.callback(Output('country-selector', 'options'),
               [Input('continent-selector', 'value')])
@@ -563,7 +608,7 @@ def create_tweets(dff, text):
 def update_tweets(country_code):
     df = get_tweets_data()
     dff = df[df['Country'] == country_code]
-    return create_tweets(dff, f"Tweets on {country_code}")
+    return create_tweets(dff, f"Tweets on {a2toa3[country_code]}")
 
 
 if __name__ == '__main__':

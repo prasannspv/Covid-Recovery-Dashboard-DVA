@@ -61,5 +61,5 @@ for idx in range(0, final_df.shape[0]+89999, 90000):
             final_df.loc[final_df[0] == int(datum['id']),'Country'] = \
                 country_map.get(datum.get('geo', {'place_id': None})['place_id'], None)
 
-        final_df.to_csv('tweets.csv', ',', mode='w+')
+        final_df.to_csv('tweets1.csv', ',', mode='w+')
         print(idx+i+100, " Done")

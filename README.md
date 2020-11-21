@@ -18,7 +18,7 @@ The dashboard has two sections:
 
 
 
-## Package Description
+## Installation
 
 ### Software for the dashboard
 
@@ -44,7 +44,7 @@ Register an account at https://data.world/data-society/global-climate-change-dat
 
 The above dataset are downloaded and placed into the dataset folder.
 
-## Installation Guide
+## Execution 
 Step 1: Install the necessary packages under the package section
 
 Step 2: Download the data listed under data collection to the "dataset" folder

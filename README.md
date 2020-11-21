@@ -24,7 +24,9 @@ The dashboard has two sections:
 
 ### Code
 Python version 3.7
+
 Libraries to install: pandas, numpy, sklearn, statsmodels, datetime, os, sys, inspect
+
 Visit https://packaging.python.org/tutorials/installing-packages/ for python package installation
 
 

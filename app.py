@@ -135,12 +135,13 @@ def get_filtered_map():
                                 "displaylogo": False,
                             }
                         )], type="default"),
+            html.Hr(),
             html.Div([
                 html.Div([
                     dcc.Graph(id="arima", config={
                         "displaylogo": False,
                     })
-                ], className="ten columns"),
+                ], className="pretty_container ten columns"),
                 html.Div(
                     dcc.Markdown("**Metrics** METRICS GO HERE METRICS GO HERE METRICS GO HERE METRICS GO HERE"),
                     className="pretty_container two columns")
@@ -232,7 +233,10 @@ def get_filter_by_continent(id=None):
 app.layout = html.Div([
     html.Div([
         html.H1('😷   COVID-19 Recovery Dashboard'),
-        html.H6('Team 162 - DVA Nightwalkers')
+        html.H6('Team 162 - DVA Nightwalkers'),
+        html.Hr(),
+        html.A(html.Button('Refresh', className='refresh'), href='/'),
+        html.P(),
     ], style={'textAlign': 'center'}),
     dcc.Tabs(id="tabs-styled-with-props", value='tab-1', children=[
         dcc.Tab(label='Key Performance Indicators', value='tab-1', style=tab_style, selected_style=tab_selected_style),
@@ -268,11 +272,11 @@ def render_arima(country_code, strictness):
             mode='lines',
         ),
         go.Scatter(
-            name = 'Adjusted New Cases Per Million',
-            x = x,
-            y = yl,
-            line = dict(color = 'blue', dash= 'dash'),
-            mode = 'lines',
+            name='Adjusted New Cases Per Million',
+            x=x,
+            y=yl,
+            line=dict(color='blue', dash='dash'),
+            mode='lines',
         ),
         go.Scatter(
             name='New Cases Per Million',
@@ -282,14 +286,14 @@ def render_arima(country_code, strictness):
             line=dict(color='red'),
         ),
         go.Scatter(
-            name = 'New Cases Per Million',
-            x = x,
-            y = y,
-            mode = 'lines',
-            line = dict(color = 'red', dash= 'dash'),
+            name='New Cases Per Million',
+            x=x,
+            y=y,
+            mode='lines',
+            line=dict(color='red', dash='dash'),
         )
     ])
-    fig.update_xaxes(rangeslider_visible = True)
+    fig.update_xaxes(rangeslider_visible=True)
     return fig
 
 
@@ -454,14 +458,16 @@ def update_graph(country_code, strictness, clicks):
     if dest_flights.size == 0:
         fig = px.scatter_geo(lat=[dest_lat], lon=[dest_lon], projection='natural earth')
         markdown = dcc.Markdown("#### NO DATA AVAILABLE FOR THE SELECTED COUNTRY")
-        fig.update_layout(margin = dict(l = 0, r = 0, t = 0, b = 0))
+        fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
     else:
         if clicks % 2 == 0:
             fig = px.choropleth(dest_flights, locationmode="ISO-3", locations='CC', color='flight_capacity',
                                 color_continuous_scale="spectral", template='seaborn', projection='natural earth')
             label = "View Positive Rate"
         else:
-            fig = px.choropleth(inf_choropleth_recent_data, locationmode = "ISO-3", locations = 'iso_code', color = 'positive_rate', color_continuous_scale = "reds", template = 'seaborn', projection = 'natural earth')
+            fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code',
+                                color='positive_rate', color_continuous_scale="reds", template='seaborn',
+                                projection='natural earth')
             label = "View Flight Capacity"
 
         fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
@@ -559,4 +565,4 @@ def update_tweets(country_code):
 
 
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(debug=True)

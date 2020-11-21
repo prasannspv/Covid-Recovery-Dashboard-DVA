@@ -550,3 +550,11 @@ h1, h6 {
 .dash-debug-menu__outer  {
   display: none !important;
 }
+
+.refresh {
+  color: white;
+}
+
+#submit-val {
+  color: black;
+}

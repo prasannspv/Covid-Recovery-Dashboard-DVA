@@ -23,11 +23,8 @@ The dashboard has two sections:
 ### Software for the dashboard
 
 ### Code
-Python version 3.7
-
-Libraries to install: pandas, numpy, sklearn, statsmodels, datetime, os, sys, inspect
-
-Visit https://packaging.python.org/tutorials/installing-packages/ for python package installation
+Python version 3.8.0
+Libraries to install: pandas, numpy, sklearn, statsmodels, datetime, inspect, dash
 
 
 ## Data Collection
@@ -47,10 +44,10 @@ Register an account at https://data.world/data-society/global-climate-change-dat
 The above dataset are downloaded and placed into the dataset folder.
 
 ## Execution 
-Step 1: Install the necessary packages under the package section
 
-Step 2: Download the data listed under data collection to the "dataset" folder
+#### Bringing up the dashboard is a simple two-step process:
+1. Install all the required packages:
+`pip install -r requirements.txt`
+2. Execute the dash app
+`python app.py`
 
-Step 3: Run code/main.py to generate dataset/prediction.csv 
-
-Step 4:

@@ -233,9 +233,8 @@ def get_filter_by_continent(id=None):
 app.layout = html.Div([
     html.Div([
         html.H1('😷   COVID-19 Recovery Dashboard'),
-        html.H6('Team 162 - DVA Nightwalkers'),
-        html.Hr(),
-        html.A(html.Button('Refresh', className='refresh'), href='/'),
+        html.H6('Team 162 - DVA Nightwalkers ✰ Final Project ✰ CSE 6242 ✰ Fall 2020'),
+        html.A(html.Button('Refresh ↺', className='refresh row'), href='/'),
         html.P(),
     ], style={'textAlign': 'center'}),
     dcc.Tabs(id="tabs-styled-with-props", value='tab-1', children=[
@@ -246,7 +245,8 @@ app.layout = html.Div([
         "primary": "#006296",
         "background": "white"
     }),
-    html.Div(id='tabs-conninet-props')
+    html.Div(id='tabs-conninet-props'),
+    html.Hr()
 ])
 
 
@@ -405,9 +405,11 @@ def kpi_plots(continent_code, country_code):
         "all": None
     }[continent_code]
     inf_choropleth_recent_data = inf_policy
-    fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3", locations='iso_code', color='positive_rate',
+    fig = px.choropleth(inf_choropleth_recent_data, locationmode="ISO-3",
+                        locations='iso_code', color='positive_rate',
                         color_continuous_scale="ylgnbu", template='seaborn',
-                        range_color=[0, 0.2], scope=continent, projection='natural earth', animation_frame='date')
+                        range_color=[0, 0.2], scope=continent, projection='natural earth',
+                        animation_frame='date')
     if continent_code == "OC":
         fig.update_geos(
             lataxis_range=[-50, 0], lonaxis_range=[50, 250]
@@ -610,4 +612,4 @@ def update_tweets(country_code):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server()

@@ -102,7 +102,7 @@ for country, country_code in WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2.items():
 def get_filtered_map():
     return html.Div([
         html.Div([
-            html.H3("Select Country and Policy", className = "bold"),
+            html.H5("Select Country and Policy", className="bold"),
             html.P("Filter by Continent", className="control_label"),
             get_filter_by_continent(),
             html.P("Select the Country", className="control_label"),
@@ -123,7 +123,7 @@ def get_filtered_map():
             html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'})
         ], className="pretty_container three columns"),
         html.Div([
-            html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text", className = "label"),
+            html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text", className="label"),
             html.P(),
             html.Button('View Positive Rate', id='submit-val', n_clicks=0),
             dcc.Loading(id="loading-1",
@@ -143,7 +143,9 @@ def get_filtered_map():
                     id='metrics',
                     className="pretty_container two columns")
             ], className="row")
-        ], className="pretty_container nine columns")
+        ], className="pretty_container nine columns"),
+        html.Hr(),
+        html.Div("Last Updated At: 20/11/2020", className="last-banner")
     ], className="row")
 
 
@@ -161,38 +163,40 @@ def get_kpi_plots():
         ], className="row"),
         html.Div([
             html.Div([
-                html.H5("New COVID-19 cases spread across the world"),
+                html.H5("New COVID-19 cases spread across the world", className="main-header"),
                 dcc.Loading(id="loading-1",
                             children=[html.Div([dcc.Graph(
                                 id='new_cases', config={
                                     "displaylogo": False,
                                 }
                             )])], type="default"),
-                html.P(),
-                html.H5("New COVID-19 deaths spread across the world"),
+                html.Hr(),
+                html.H5("New COVID-19 deaths spread across the world", className="main-header"),
                 dcc.Loading(id="loading-icon",
                             children=[html.Div([dcc.Graph(
                                 id='new_deaths_per_million', config={
                                     "displaylogo": False,
                                 }
                             )])], type="default"),
+                html.Hr(),
+                html.Div("Last Updated At: 20/11/2020", className="last-banner"),
             ], className="pretty_container seven columns"),
             html.Div([
-                html.H5("Statistics"),
-                html.H5("New Cases"),
+                html.H5("Statistics trend per country", className="main-header"),
+                html.P("New Cases", className="sub-section-header"),
                 dcc.Graph(id='x-time-series-new-cases', config={
                     "displaylogo": False,
                 }),
-                html.Hr(),
-                html.H5("New Deaths"),
+                html.P("New Deaths", className="sub-section-header"),
                 dcc.Graph(id='x-time-series-new-deaths', config={
                     "displaylogo": False,
                 }),
-                html.Hr(),
-                html.H5("Sentiment polarity of tweets"),
+                html.P("Sentiment polarity of tweets", className="sub-section-header"),
                 dcc.Graph(id='sentiment-tweets', config={
                     "displaylogo": False,
-                })
+                }),
+                html.Hr(),
+                html.Div("Last Updated At: 20/11/2020", className="last-banner"),
             ], className="pretty_container five columns", id='rightCol')
         ], className="row"),
     ], id="mainContainer"
@@ -231,7 +235,7 @@ app.layout = html.Div([
     html.Div([
         html.H1('😷   COVID-19 Recovery Dashboard'),
         html.H6('Team 162 - DVA Nightwalkers ✰ Final Project ✰ CSE 6242 ✰ Fall 2020'),
-        html.A(html.Button('Refresh ↺', className='refresh row'), href='/'),
+        html.A(html.Button('Reset zoom and applied filters ↺', className='refresh row'), href='/'),
         html.P(),
     ], style={'textAlign': 'center'}),
     dcc.Tabs(id="tabs-styled-with-props", value='tab-1', children=[
@@ -302,6 +306,7 @@ def render_conninet(tab):
     elif tab == 'tab-2':
         return get_filtered_map()
 
+
 @app.callback(Output('country-selector', 'options'),
               [Input('continent-selector', 'value')])
 def continent_filer_options(continent):
@@ -317,6 +322,7 @@ def continent_filer_options(continent):
             })
         return options
 
+
 @app.callback(Output('metrics', 'children'),
               [Input('country-selector', 'value'), Input('strictness', 'value')])
 def div_options(country, strictness):
@@ -325,13 +331,14 @@ def div_options(country, strictness):
     if strictness == 'high':
         fl_df = risk_factors[risk_factors['iso_code'] == country_]
         countries = fl_df.sources_y.iloc[0]
-        countries = html.Ul([html.Li(country_alpha2_to_country_name(a3toa2[x]), className = "label") for x in countries.split(';')])
+        countries = html.Ul(
+            [html.Li(country_alpha2_to_country_name(a3toa2[x]), className="label") for x in countries.split(';')])
         cont = html.Div([
-            dcc.Markdown("Air corridor can be opened to the following countries", className = "label"),
+            dcc.Markdown("Air corridor can be opened to the following countries", className="label"),
             countries
         ])
     else:
-        cont = dcc.Markdown("Air corridor opened to all the countries", className = "label")
+        cont = dcc.Markdown("Air corridor opened to all the countries", className="label")
     cont_df = arima[arima.location == country_alpha2_to_country_name(country)]
     warn_div = None
 
@@ -348,21 +355,22 @@ def div_options(country, strictness):
     else:
         act = pred = "NA"
     if cont_df.size > 0 and pred > act:
-        pct_ch = round((pred - act)/max(act, 1), 2)
+        pct_ch = round((pred - act) / max(act, 1), 2)
         if pct_ch > 0.1:
             warn_div = dcc.Markdown("More than 10% of surge in cases detected! This policy is not recommended.",
-                                    className = "red label")
+                                    className="red label")
 
     content = html.Div([
-        dcc.Markdown("Expected New Cases Per Million", className = "label"),
-        dcc.Markdown(f"### {act}", className = "red"),
-        dcc.Markdown("Adjusted New Cases Per Million", className = "label"),
-        dcc.Markdown(f"### {pred}", className = "blue"),
+        dcc.Markdown("Expected New Cases Per Million", className="label"),
+        dcc.Markdown(f"### {act}", className="red"),
+        dcc.Markdown("Adjusted New Cases Per Million", className="label"),
+        dcc.Markdown(f"### {pred}", className="blue"),
         warn_div,
         cont
     ])
 
     return content
+
 
 @app.callback(Output('kpi-country', 'options'),
               [Input('kpi-continent', 'value')])
@@ -475,7 +483,7 @@ def policy_indicator(strictness):
         label = restriction['label']
         resp = "✔️" if value == "yes" else "❌" if value == "no" else "⚠️"
         elements.append(html.Span(resp, className=f"{value} label"))
-        elements.append(html.Span(f" {label}", className = "label"))
+        elements.append(html.Span(f" {label}", className="label"))
 
     strictness_lbl = {
         'high': 'Strict',
@@ -535,7 +543,7 @@ def update_graph(country_code, strictness, clicks):
             'high': "Highest"
         }[strictness]
 
-        markdown = dcc.Markdown(text.format(country, strictness_level), className = "label")
+        markdown = dcc.Markdown(text.format(country, strictness_level), className="label")
     return fig, markdown, label
 
 
@@ -609,4 +617,4 @@ def update_tweets(country_code):
 
 
 if __name__ == '__main__':
-    app.run_server(debug = True)
+    app.run_server()

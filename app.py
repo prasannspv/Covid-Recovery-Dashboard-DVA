@@ -105,7 +105,7 @@ for country, country_code in WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2.items():
 def get_filtered_map():
     return html.Div([
         html.Div([
-            html.H5("Select Country and Policy", className="control_label"),
+            html.H3("Select Country and Policy", className = "bold"),
             html.P("Filter by Continent", className="control_label"),
             get_filter_by_continent(),
             html.P("Select the Country", className="control_label"),
@@ -126,7 +126,7 @@ def get_filtered_map():
             html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'})
         ], className="pretty_container three columns"),
         html.Div([
-            html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
+            html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text", className = "label"),
             html.P(),
             html.Button('View Positive Rate', id='submit-val', n_clicks=0),
             dcc.Loading(id="loading-1",
@@ -307,22 +307,22 @@ def render_conninet(tab):
 
 @app.callback(Output('metrics', 'children'),
               [Input('country-selector', 'value'), Input('strictness', 'value')])
-def continent_filer_options(country, strictness):
+def div_options(country, strictness):
     cont = None
     country_ = a2toa3[country]
-
     if strictness == 'high':
         fl_df = risk_factors[risk_factors['iso_code'] == country_]
         countries = fl_df.sources_y.iloc[0]
-        countries = html.Ul([html.Li(country_alpha2_to_country_name(a3toa2[x])) for x in countries.split(';')])
+        countries = html.Ul([html.Li(country_alpha2_to_country_name(a3toa2[x]), className = "label") for x in countries.split(';')])
         cont = html.Div([
-            dcc.Markdown("Air corridor can be opened to the following countries"),
+            dcc.Markdown("Air corridor can be opened to the following countries", className = "label"),
             countries
         ])
     else:
-        cont = dcc.Markdown("Air corridor opened to all the countries")
+        cont = dcc.Markdown("Air corridor opened to all the countries", className = "label")
     cont_df = arima[arima.location == country_alpha2_to_country_name(country)]
     date_ = cont_df[cont_df.date == max(cont_df.date)]
+    print(date_)
     act = date_['new_cases_per_million']
     if date_.size == 0:
         act = pred = "NA"
@@ -335,15 +335,15 @@ def continent_filer_options(country, strictness):
 
     warn_div = None
     if date_.size > 0 and pred > act:
-        pct_ch = round((pred - act)/act, 2)
+        pct_ch = round((pred - act)/max(act, 1), 2)
         if pct_ch > 0.1:
-            warn_div = dcc.Markdown("10% of surge in cases detected! This policy is not recommended.",
-                                    className = "red")
+            warn_div = dcc.Markdown("More than 10% of surge in cases detected! This policy is not recommended.",
+                                    className = "red label")
 
     content = html.Div([
-        dcc.Markdown("Expected New Cases Per Million"),
+        dcc.Markdown("Expected New Cases Per Million", className = "label"),
         dcc.Markdown(f"### {act}", className = "red"),
-        dcc.Markdown("Adjusted New Cases Per Million"),
+        dcc.Markdown("Adjusted New Cases Per Million", className = "label"),
         dcc.Markdown(f"### {pred}", className = "blue"),
         warn_div,
         cont
@@ -475,8 +475,8 @@ def policy_indicator(strictness):
         value = restriction['value']
         label = restriction['label']
         resp = "✔️" if value == "yes" else "❌" if value == "no" else "⚠️"
-        elements.append(html.Span(resp, className=f"{value}"))
-        elements.append(html.Span(f" {label}"))
+        elements.append(html.Span(resp, className=f"{value} label"))
+        elements.append(html.Span(f" {label}", className = "label"))
 
     strictness_lbl = {
         'high': 'Strict',
@@ -536,7 +536,7 @@ def update_graph(country_code, strictness, clicks):
             'high': "Highest"
         }[strictness]
 
-        markdown = dcc.Markdown(text.format(country, strictness_level))
+        markdown = dcc.Markdown(text.format(country, strictness_level), className = "label")
     return fig, markdown, label
 
 

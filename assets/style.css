@@ -152,6 +152,7 @@ body {
   margin: 0 0 0;
   width: calc(100% - 40px);
   font-weight: bold;
+  font-size: 14px;
 }
 
 .rc-slider {
@@ -568,4 +569,16 @@ h1, h6 {
 
 .blue {
   color: blue;
+}
+
+label {
+  font-size: 15px;
+}
+
+.label {
+  font-size: 15px;
+}
+
+.bold {
+  font-weight: bold;
 }

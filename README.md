@@ -1,21 +1,27 @@
 # Covid-Recovery-Dashboard-DVA
 
+## Overview
+We have built a "COVID recovery dashboard" to help businesses take decisions to recover from the pandemic and return to the new normalcy. We have used an innovative approach by combining various factors to predict and guide the public to make meaningful decisions.
 
-DATA COLLECTION & CLEANING:
+## Dashboard
 
-**Flights Data:**   
-Source: https://openflights.org/data.html  
-  
-Datasets to be downloaded:  
-1. Routes.dat  
-2. Airport.dat  
-3. Airlines.dat  
-4. Countries.dat  
-  
-Note: Flight capacity was manually entered into a csv. (Source:https://www.dvbbank.com/~/media/Files/D/dvbbank-corp/aviation/dvb-overview-of-commercial-aircraft-2018-2019.pdf)    
-  
-Final Data File to use:  
-flights_withcapacity.csv  
-  
-Reference R Script for data cleaning & munging:  
-flights_data_cleaning.R
+Dashboard link: https://covid-recovery-dashboard.herokuapp.com/
+
+The dashboard has two sections:
+
+1. Key Performance Indicators
+
+
+
+
+2. Prediction Engine
+
+
+
+## Package Description
+
+Software for the dashboard
+
+Software and model for prediction
+
+

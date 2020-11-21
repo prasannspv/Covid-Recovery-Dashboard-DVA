@@ -266,28 +266,21 @@ def render_arima(country_code, strictness):
     ydl = lim_df[f'new_cases_per_million_{val}']
     fig = go.Figure([
         go.Scatter(
-            name='Adjusted New Cases Per Million',
+            name='New Cases Per Million',
             x=xd,
             y=ydl,
-            line=dict(color='blue'),
-            mode='lines',
+            line=dict(color='red'),
+            mode='lines'
         ),
         go.Scatter(
-            name='Adjusted New Cases Per Million',
+            name='Prediction with the Policy',
             x=x,
             y=yl,
             line=dict(color='blue', dash='dash'),
             mode='lines',
         ),
         go.Scatter(
-            name='New Cases Per Million',
-            x=xd,
-            y=yd,
-            mode='lines',
-            line=dict(color='red'),
-        ),
-        go.Scatter(
-            name='New Cases Per Million',
+            name='Prediction without the Policy',
             x=x,
             y=y,
             mode='lines',

@@ -152,6 +152,7 @@ body {
   margin: 0 0 0;
   width: calc(100% - 40px);
   font-weight: bold;
+  font-size: 14px;
 }
 
 .rc-slider {
@@ -586,4 +587,16 @@ h1, h6 {
   text-align: left;
   font-style: italic;
   font-size: 1.8rem;
+}
+
+label {
+  font-size: 15px;
+}
+
+.label {
+  font-size: 15px;
+}
+
+.bold {
+  font-weight: bold;
 }

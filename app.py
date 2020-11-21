@@ -2,11 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
-import numpy as np
-from plotly.graph_objects import layout
-from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-import json
 import plotly.express as px
 from pycountry_convert import country_alpha2_to_country_name, country_name_to_country_alpha2, \
     country_name_to_country_alpha3, map_country_alpha2_to_country_alpha3, map_country_alpha3_to_country_alpha2
@@ -14,7 +10,6 @@ from pycountry_convert.convert_country_alpha2_to_continent_code import COUNTRY_A
 from dash.dependencies import Output, Input
 from pycountry_convert.country_wikipedia import WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2
 import time
-from flask import Flask, send_from_directory
 import datetime
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -24,6 +19,7 @@ tabs_styles = {
 }
 tab_style = {
     'borderBottom': '1px solid #d6d6d6',
+    "font-size": "17px"
     # 'padding': '6px',
     # 'fontWeight': 'bold'
 }
@@ -33,7 +29,8 @@ tab_selected_style = {
     # 'borderTop': '1px solid #d6d6d6',
     'backgroundColor': '#006296',
     'color': 'white',
-    'fontWeight': 'bold'
+    'fontWeight': 'bold',
+    "font-size": "17px"
     # 'padding': '6px'
 }
 
@@ -105,7 +102,7 @@ for country, country_code in WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2.items():
 def get_filtered_map():
     return html.Div([
         html.Div([
-            html.H5("Select Country and Policy", className="control_label"),
+            html.H5("Select Country and Policy", className="bold"),
             html.P("Filter by Continent", className="control_label"),
             get_filter_by_continent(),
             html.P("Select the Country", className="control_label"),
@@ -126,7 +123,7 @@ def get_filtered_map():
             html.Div(id="policy-indicator", style={'padding': '0px 10px 10px 10px'})
         ], className="pretty_container three columns"),
         html.Div([
-            html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text"),
+            html.P(dcc.Markdown(text.format("United States", "Lowest")), id="text", className="label"),
             html.P(),
             html.Button('View Positive Rate', id='submit-val', n_clicks=0),
             dcc.Loading(id="loading-1",
@@ -309,51 +306,6 @@ def render_conninet(tab):
     elif tab == 'tab-2':
         return get_filtered_map()
 
-@app.callback(Output('metrics', 'children'),
-              [Input('country-selector', 'value'), Input('strictness', 'value')])
-def continent_filer_options(country, strictness):
-    cont = None
-    country_ = a2toa3[country]
-
-    if strictness == 'high':
-        fl_df = risk_factors[risk_factors['iso_code'] == country_]
-        countries = fl_df.sources_y.iloc[0]
-        countries = html.Ul([html.Li(country_alpha2_to_country_name(a3toa2[x])) for x in countries.split(';')])
-        cont = html.Div([
-            dcc.Markdown("Air corridor can be opened to the following countries"),
-            countries
-        ])
-    else:
-        cont = dcc.Markdown("Air corridor opened to all the countries")
-    cont_df = arima[arima.location == country_alpha2_to_country_name(country)]
-    date_ = cont_df[cont_df.date == max(cont_df.date)]
-    act = date_['new_cases_per_million']
-    if date_.size == 0:
-        act = pred = "NA"
-    elif strictness == 'high':
-        act = int(act.iloc[0])
-        pred = int(date_['new_cases_per_million_low'].iloc[0])
-    else:
-        act = int(act.iloc[0])
-        pred = int(date_['new_cases_per_million_high'].iloc[0])
-
-    warn_div = None
-    if date_.size > 0 and pred > act:
-        pct_ch = round((pred - act)/act, 2)
-        if pct_ch > 0.1:
-            warn_div = dcc.Markdown("10% of surge in cases detected! This policy is not recommended.",
-                                    className = "red")
-
-    content = html.Div([
-        dcc.Markdown("Expected New Cases Per Million"),
-        dcc.Markdown(f"### {act}", className = "red"),
-        dcc.Markdown("Adjusted New Cases Per Million"),
-        dcc.Markdown(f"### {pred}", className = "blue"),
-        warn_div,
-        cont
-    ])
-
-    return content
 
 @app.callback(Output('country-selector', 'options'),
               [Input('continent-selector', 'value')])
@@ -369,6 +321,55 @@ def continent_filer_options(continent):
                 'value': country_name_to_country_alpha2(country)
             })
         return options
+
+
+@app.callback(Output('metrics', 'children'),
+              [Input('country-selector', 'value'), Input('strictness', 'value')])
+def div_options(country, strictness):
+    cont = None
+    country_ = a2toa3[country]
+    if strictness == 'high':
+        fl_df = risk_factors[risk_factors['iso_code'] == country_]
+        countries = fl_df.sources_y.iloc[0]
+        countries = html.Ul(
+            [html.Li(country_alpha2_to_country_name(a3toa2[x]), className="label") for x in countries.split(';')])
+        cont = html.Div([
+            dcc.Markdown("Air corridor can be opened to the following countries", className="label"),
+            countries
+        ])
+    else:
+        cont = dcc.Markdown("Air corridor opened to all the countries", className="label")
+    cont_df = arima[arima.location == country_alpha2_to_country_name(country)]
+    warn_div = None
+
+    if cont_df.size > 0:
+        date_ = cont_df[cont_df.date == max(cont_df.date)]
+        act = date_['new_cases_per_million']
+        if strictness == 'high':
+            act = int(act.iloc[0])
+            pred = int(date_['new_cases_per_million_low'].iloc[0])
+        else:
+            act = int(act.iloc[0])
+            pred = int(date_['new_cases_per_million_high'].iloc[0])
+
+    else:
+        act = pred = "NA"
+    if cont_df.size > 0 and pred > act:
+        pct_ch = round((pred - act) / max(act, 1), 2)
+        if pct_ch > 0.1:
+            warn_div = dcc.Markdown("More than 10% of surge in cases detected! This policy is not recommended.",
+                                    className="red label")
+
+    content = html.Div([
+        dcc.Markdown("Expected New Cases Per Million", className="label"),
+        dcc.Markdown(f"### {act}", className="red"),
+        dcc.Markdown("Adjusted New Cases Per Million", className="label"),
+        dcc.Markdown(f"### {pred}", className="blue"),
+        warn_div,
+        cont
+    ])
+
+    return content
 
 
 @app.callback(Output('kpi-country', 'options'),
@@ -481,8 +482,8 @@ def policy_indicator(strictness):
         value = restriction['value']
         label = restriction['label']
         resp = "✔️" if value == "yes" else "❌" if value == "no" else "⚠️"
-        elements.append(html.Span(resp, className=f"{value}"))
-        elements.append(html.Span(f" {label}"))
+        elements.append(html.Span(resp, className=f"{value} label"))
+        elements.append(html.Span(f" {label}", className="label"))
 
     strictness_lbl = {
         'high': 'Strict',
@@ -542,7 +543,7 @@ def update_graph(country_code, strictness, clicks):
             'high': "Highest"
         }[strictness]
 
-        markdown = dcc.Markdown(text.format(country, strictness_level))
+        markdown = dcc.Markdown(text.format(country, strictness_level), className="label")
     return fig, markdown, label
 
 

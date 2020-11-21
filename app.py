@@ -2,11 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
-import numpy as np
-from plotly.graph_objects import layout
-from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-import json
 import plotly.express as px
 from pycountry_convert import country_alpha2_to_country_name, country_name_to_country_alpha2, \
     country_name_to_country_alpha3, map_country_alpha2_to_country_alpha3, map_country_alpha3_to_country_alpha2
@@ -14,7 +10,6 @@ from pycountry_convert.convert_country_alpha2_to_continent_code import COUNTRY_A
 from dash.dependencies import Output, Input
 from pycountry_convert.country_wikipedia import WIKIPEDIA_COUNTRY_NAME_TO_COUNTRY_ALPHA2
 import time
-from flask import Flask, send_from_directory
 import datetime
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -307,6 +302,21 @@ def render_conninet(tab):
     elif tab == 'tab-2':
         return get_filtered_map()
 
+@app.callback(Output('country-selector', 'options'),
+              [Input('continent-selector', 'value')])
+def continent_filer_options(continent):
+    if continent == 'all':
+        return country_options
+    else:
+        options = []
+        countries = continent_filter[continent]
+        for country in countries:
+            options.append({
+                'label': country,
+                'value': country_name_to_country_alpha2(country)
+            })
+        return options
+
 @app.callback(Output('metrics', 'children'),
               [Input('country-selector', 'value'), Input('strictness', 'value')])
 def div_options(country, strictness):
@@ -323,20 +333,21 @@ def div_options(country, strictness):
     else:
         cont = dcc.Markdown("Air corridor opened to all the countries", className = "label")
     cont_df = arima[arima.location == country_alpha2_to_country_name(country)]
-    date_ = cont_df[cont_df.date == max(cont_df.date)]
-    print(date_)
-    act = date_['new_cases_per_million']
-    if date_.size == 0:
-        act = pred = "NA"
-    elif strictness == 'high':
-        act = int(act.iloc[0])
-        pred = int(date_['new_cases_per_million_low'].iloc[0])
-    else:
-        act = int(act.iloc[0])
-        pred = int(date_['new_cases_per_million_high'].iloc[0])
-
     warn_div = None
-    if date_.size > 0 and pred > act:
+
+    if cont_df.size > 0:
+        date_ = cont_df[cont_df.date == max(cont_df.date)]
+        act = date_['new_cases_per_million']
+        if strictness == 'high':
+            act = int(act.iloc[0])
+            pred = int(date_['new_cases_per_million_low'].iloc[0])
+        else:
+            act = int(act.iloc[0])
+            pred = int(date_['new_cases_per_million_high'].iloc[0])
+
+    else:
+        act = pred = "NA"
+    if cont_df.size > 0 and pred > act:
         pct_ch = round((pred - act)/max(act, 1), 2)
         if pct_ch > 0.1:
             warn_div = dcc.Markdown("More than 10% of surge in cases detected! This policy is not recommended.",
@@ -352,22 +363,6 @@ def div_options(country, strictness):
     ])
 
     return content
-
-@app.callback(Output('country-selector', 'options'),
-              [Input('continent-selector', 'value')])
-def continent_filer_options(continent):
-    if continent == 'all':
-        return country_options
-    else:
-        options = []
-        countries = continent_filter[continent]
-        for country in countries:
-            options.append({
-                'label': country,
-                'value': country_name_to_country_alpha2(country)
-            })
-        return options
-
 
 @app.callback(Output('kpi-country', 'options'),
               [Input('kpi-continent', 'value')])
@@ -614,4 +609,4 @@ def update_tweets(country_code):
 
 
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(debug = True)

@@ -11,12 +11,13 @@ The dashboard has two sections:
 
 1. Key Performance Indicators
 
+Show various COVID statistics like new cases, deaths and sentiment polarity across various countries
 
 
 
 2. Prediction Engine
 
-
+To allow the users visualize the impact of strict and lenient policies for decision makers
 
 
 ### Data
